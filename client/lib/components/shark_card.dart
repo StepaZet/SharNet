@@ -1,46 +1,84 @@
-import 'package:client/models/config.dart';
 import 'package:flutter/material.dart';
 
+import '../api/sharks.dart';
 import '../models/shark.dart';
 import '../pages/details/shark_details_page.dart';
 
 class SharkCard extends StatelessWidget {
-  final Shark shark;
+  final SharkMapInfo shark;
 
   const SharkCard({Key? key, required this.shark}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white, // Фон карточки
-        borderRadius: BorderRadius.circular(16), // Скругленные углы
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2), // Цвет тени
-            blurRadius: 10, // Радиус размытия тени
-            offset: Offset(0, 2), // Смещение тени по X и Y
-          ),
-        ],
+    double baseHeight = MediaQuery.of(context).size.height;
+    double baseFontSize = baseHeight * 0.025; // Например, 5% от ширины экрана
+
+
+    return Card(
+      clipBehavior: Clip.antiAlias, // Обрезка содержимого по границе карточки
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20), // Скругленные углы
       ),
-      child: Card(
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16), // Согласование с фоном
-        ),
-        child: ListTile(
-          leading: Image.network(Config.defaultSharkUrl, fit: BoxFit.cover),
-          title: Text(shark.name),
-          subtitle: Text('Длина: ${shark.length} см\nВес: ${shark.weight} кг'),
-          trailing: Icon(Icons.arrow_forward),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => SharkPage(shark: shark)),
-            );
-          },
+      child: InkWell(
+        onTap: () async {
+          SharkFullInfo sharkFullInfo = await getSharkFullInfo(shark.id);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => SharkPage(shark: shark, sharkFullInfo: sharkFullInfo)),
+          );
+        },
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Image.network(
+                shark.photo,
+                fit: BoxFit.cover, // Изображение будет заполнять всю высоту карточки
+                height: baseHeight * 0.3,
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Text(shark.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: baseFontSize * 0.8)),
+                    SizedBox(height: baseFontSize * 0.1), // Расстояние между элементами
+                    InfoLine(label: 'Length', value: '${shark.length} cm', baseFontSize: baseFontSize),
+                    InfoLine(label: 'Weight', value: '${shark.weight} kg', baseFontSize: baseFontSize),
+                    InfoLine(label: 'Sex', value: shark.sex, baseFontSize: baseFontSize),
+                    InfoLine(label: 'Tracks', value: '${shark.tracks}', baseFontSize: baseFontSize),
+                    InfoLine(label: 'Last tagged', value: shark.lastTagged, baseFontSize: baseFontSize),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+}
+
+class InfoLine extends StatelessWidget {
+  final String label;
+  final String value;
+  final double baseFontSize;
+
+  const InfoLine({Key? key, required this.label, required this.value, required this.baseFontSize}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Row(
+      children: [
+        Text('$label\t', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
+        Text(value, style: TextStyle(fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
+      ],
     );
   }
 }

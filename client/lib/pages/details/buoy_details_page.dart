@@ -2,21 +2,22 @@ import 'package:flutter/material.dart';
 import '../../components/buoy_map.dart';
 import '../../components/shark_card.dart';
 import '../../models/buoy.dart';
-import '../../models/config.dart';
 import '../../models/shark.dart';
 
 class BuoyDetailsPage extends StatefulWidget {
-  final Buoy buoy;
-  final List<Shark> sharks;
+  final BuoyMapInfo buoy;
+  final List<SharkMapInfo> sharks;
+  final BuoyFullInfo buoyFullInfo;
 
-  BuoyDetailsPage({required this.buoy, required this.sharks});
+  const BuoyDetailsPage({super.key, required this.buoy, required this.sharks, required this.buoyFullInfo});
 
   @override
-  _BuoyDetailsPageState createState() => _BuoyDetailsPageState();
+  BuoyDetailsPageState createState() => BuoyDetailsPageState();
 }
 
-class _BuoyDetailsPageState extends State<BuoyDetailsPage> with SingleTickerProviderStateMixin {
+class BuoyDetailsPageState extends State<BuoyDetailsPage> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+
 
   @override
   void initState() {
@@ -32,34 +33,53 @@ class _BuoyDetailsPageState extends State<BuoyDetailsPage> with SingleTickerProv
 
   @override
   Widget build(BuildContext context) {
+    double baseSizeWidth = MediaQuery.of(context).size.width;
+    double baseSizeHeight = MediaQuery.of(context).size.height;
+    double baseFontSize = baseSizeHeight * 0.03; // Например, 5% от ширины экрана
+
     return Scaffold(
       appBar: AppBar(
-        title: Text("New Buoy"),
+        title: Text(widget.buoyFullInfo.name),
+        // center it
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.network(Config.defaultBuoyUrl),
+            Image.network(widget.buoyFullInfo.photo),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('ID: ${widget.buoy.id}', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text('Location: ${widget.buoy.latitude}, ${widget.buoy.longitude}'),
-                  Text('Status: ${widget.buoy.status}'),
-                  SizedBox(height: 8),
-                  Divider(),
-                  Text('Ping log', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  Text('Pings: ${widget.buoy.pings}'),
-                  Text('Active buoy days: ${widget.buoy.activeDays}'),
-                  Text('Detected sharks: ${widget.buoy.detectedSharks}'),
-                  Text('Detected tracks: ${widget.buoy.detectedTracks}'),
-                  Text('Date of placement: ${widget.buoy.dateOfPlacement}'),
-                  Text('Last ping: ${widget.buoy.lastPing}'),
+                  InfoLine(label: 'ID', value: widget.buoyFullInfo.id, baseFontSize: baseFontSize),
+                  SizedBox(height: baseFontSize * 0.2),
+                  InfoLine(label: 'Location', value: '${widget.buoyFullInfo.location.latitude.toStringAsFixed(2)}, ${widget.buoyFullInfo.location.longitude.toStringAsFixed(2)}', baseFontSize: baseFontSize),
+                  SizedBox(height: baseFontSize * 0.2),
+                  InfoLine(label: 'Status', value: widget.buoyFullInfo.status, baseFontSize: baseFontSize),
+                  const SizedBox(height: 8),
+                  const Divider(),
+                  const SizedBox(height: 8),
+                  InfoLine(label: 'Pings', value: '${widget.buoyFullInfo.pings}', baseFontSize: baseFontSize),
+                  SizedBox(height: baseFontSize * 0.2),
+                  InfoLine(label: 'Active buoy days', value: '${widget.buoyFullInfo.activeBuoyDays}', baseFontSize: baseFontSize),
+                  SizedBox(height: baseFontSize * 0.2),
+                  InfoLine(label: 'Detected sharks', value: '${widget.buoyFullInfo.detectedSharks}', baseFontSize: baseFontSize),
+                  SizedBox(height: baseFontSize * 0.2),
+                  InfoLine(label: 'Date of placement', value: widget.buoyFullInfo.dateOfPlacement, baseFontSize: baseFontSize),
+                  SizedBox(height: baseFontSize * 0.2),
+                  InfoLine(label: 'Last ping', value: widget.buoyFullInfo.lastPing, baseFontSize: baseFontSize),
+                  const SizedBox(height: 8),
+                  const Divider(),
+                  const SizedBox(height: 8),
+                  Text(
+                    widget.buoyFullInfo.description,
+                    style: TextStyle(fontFamily: 'inter', fontSize: baseFontSize * 0.7),
+                  ),
                 ],
               ),
             ),
+
             Container(
               alignment: Alignment.center,
               child: TabBar(
@@ -71,22 +91,22 @@ class _BuoyDetailsPageState extends State<BuoyDetailsPage> with SingleTickerProv
                   borderRadius: BorderRadius.circular(50),
                   color: Colors.white,
                 ),
-                tabs: [
+                tabs: const [
                   Tab(text: 'Location'),
                   Tab(text: 'Sharks'),
                 ],
               ),
             ),
             SizedBox(
-              height: 300, // Это примерная высота, которую можно изменить
+              height: baseSizeWidth,
               child: TabBarView(
                 controller: _tabController,
-                physics: NeverScrollableScrollPhysics(), // Запрет на свайпы
+                physics: const NeverScrollableScrollPhysics(), // Запрет на свайпы
                 children: [
                   BuoyMap(
-                    locationLongitude: widget.buoy.longitude,
-                    locationLatitude: widget.buoy.latitude,
-                  ), // Предполагаемый виджет детальной информации о буе
+                    locationLongitude: widget.buoyFullInfo.location.longitude,
+                    locationLatitude: widget.buoyFullInfo.location.latitude,
+                  ),
                   _buildSharkList(),
                 ],
               ),
@@ -101,8 +121,31 @@ class _BuoyDetailsPageState extends State<BuoyDetailsPage> with SingleTickerProv
     return ListView.builder(
       itemCount: widget.sharks.length,
       itemBuilder: (context, index) {
-        return SharkCard(shark: widget.sharks[index]);
+        double baseHeight = MediaQuery.of(context).size.height;
+        return SizedBox(
+          height: baseHeight * 0.2,
+          child: SharkCard(shark: widget.sharks[index]),
+        );
       },
+    );
+  }
+}
+
+class InfoLine extends StatelessWidget {
+  final String label;
+  final String value;
+  final double baseFontSize;
+
+  const InfoLine({Key? key, required this.label, required this.value, required this.baseFontSize}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text('$label\t', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
+        Text(value, style: TextStyle(fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
+      ],
     );
   }
 }

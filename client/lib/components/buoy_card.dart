@@ -1,57 +1,90 @@
-import 'package:client/mocks/sharks_list.dart';
-import 'package:client/models/buoy.dart';
 import 'package:flutter/material.dart';
-import '../models/config.dart';
+import '../api/buoys.dart';
+import '../api/map.dart';
+import '../models/buoy.dart';
 import '../models/shark.dart';
 import '../pages/details/buoy_details_page.dart';
 
 class BuoyCard extends StatelessWidget {
-  final Buoy buoy;
+  final BuoyMapInfo buoy;
 
-  BuoyCard({super.key, required this.buoy});
+  const BuoyCard({super.key, required this.buoy});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white, // Фон карточки
-        borderRadius: BorderRadius.circular(16), // Скругленные углы
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2), // Цвет тени
-            blurRadius: 10, // Радиус размытия тени
-            offset: Offset(0, 2), // Смещение тени по X и Y
-          ),
-        ],
+    double baseHeight = MediaQuery.of(context).size.height;
+    double baseFontSize = baseHeight * 0.025; // Например, 5% от ширины экрана
+
+    return Card(
+      clipBehavior: Clip.antiAlias, // Обрезка содержимого по границе карточки
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20), // Скругленные углы
       ),
-      child: Card(
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16), // Скругленные углы
-        ),
-        child: ListTile(
-          leading: Image.network(Config.defaultBuoyUrl, fit: BoxFit.cover),
-          title: Text(buoy.name),
-          subtitle: Padding(
-            padding: const EdgeInsets.only(top: 8.0), // Добавьте отступ для разделения текста, если нужно
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Pings: ${buoy.pings}'),
-                Text('Detected sharks: ${buoy.detectedSharks}'),
-                Text('Detected tracks: ${buoy.detectedTracks}'),
-              ],
+      elevation: 2, // Небольшая тень для карточки
+      child: InkWell(
+        onTap: () async {
+          List<SharkMapInfo> sharks = [];
+
+          for (var data in buoy.sharksList) {
+              sharks.add(await getSharkMapInfo(data.id));
+          }
+
+          BuoyFullInfo buoyFullInfo = await getBuoyFullInfo(buoy.id);
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => BuoyDetailsPage(buoy: buoy, sharks: sharks, buoyFullInfo: buoyFullInfo)),
+          );
+        },
+        child: Row(
+          children: [
+            Expanded(
+              flex: 2,
+              child: Image.network(
+                buoy.photo,
+                fit: BoxFit.cover, // Изображение будет заполнять всю высоту карточки
+                height: baseHeight * 0.3,
+              ),
             ),
-          ),
-          onTap: () {
-            List<Shark> sharks = getSharks();
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => BuoyDetailsPage(buoy: buoy, sharks: sharks)),
-            );
-          },
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Text(buoy.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: baseFontSize * 0.8)),
+                    SizedBox(height: baseFontSize * 0.1), // Расстояние между элементами
+                    InfoLine(label: 'Location', value: '${buoy.location[0].toStringAsFixed(2)}, ${buoy.location[1].toStringAsFixed(2)}', baseFontSize: baseFontSize),
+                    InfoLine(label: 'Pings', value: '${buoy.pings}', baseFontSize: baseFontSize),
+                    InfoLine(label: 'Sharks', value: '${buoy.detectedSharks}', baseFontSize: baseFontSize),
+                    InfoLine(label: 'Tracks', value: '${buoy.detectedTracks}', baseFontSize: baseFontSize),
+                    InfoLine(label: 'Last ping', value: buoy.lastPing, baseFontSize: baseFontSize),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
+    );
+  }
+}
+
+class InfoLine extends StatelessWidget {
+  final String label;
+  final String value;
+  final double baseFontSize;
+
+  const InfoLine({Key? key, required this.label, required this.value, required this.baseFontSize}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Text('$label\t', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
+        Text(value, style: TextStyle(fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
+      ],
     );
   }
 }

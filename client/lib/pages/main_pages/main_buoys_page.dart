@@ -1,32 +1,161 @@
 import 'package:flutter/material.dart';
-
+import '../../api/buoys.dart';
 import '../../models/buoy.dart';
 import '../../components/buoy_card.dart';
 
-class BuoysPage extends StatelessWidget {
-  const BuoysPage({super.key});
+class BuoysPage extends StatefulWidget {
+  const BuoysPage({Key? key}) : super(key: key);
+
+  @override
+  _BuoysPageState createState() => _BuoysPageState();
+}
+
+class _BuoysPageState extends State<BuoysPage> {
+  late Future<BuoySearchInfo> _buoyListFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _buoyListFuture = searchBuoy('');
+  }
 
   @override
   Widget build(BuildContext context) {
-
-    List<Buoy> buoys = [
-      Buoy(name: 'New Buoy', pings: 37, detectedSharks: 3, detectedTracks: 7, id: '1', status: 'Active', latitude: 37.4219983, longitude: -122.084),
-      Buoy(name: 'New Buoy', pings: 37, detectedSharks: 0, detectedTracks: 0, id: '2', status: 'Active', latitude: 25.761681, longitude: -80.191788),
-      Buoy(name: 'New Buoy', pings: 37, detectedSharks: 1, detectedTracks: 1, id: '3', status: 'Active', latitude: 19.8967662, longitude: -155.5827818),
-      // Добавьте другие буйки здесь
-    ];
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bouys'),
+        title: const Text('Buoys'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () async {
+              await showSearch(
+                context: context,
+                delegate: BuoySearchDelegate(),
+              );
+              setState(() {
+                _buoyListFuture = searchBuoy('');
+              });
+            },
+          ),
+        ],
       ),
-      body: ListView.builder(
-        itemCount: buoys.length,
-        itemBuilder: (context, index) {
-          return BuoyCard(buoy: buoys[index]);
-        },
-      )
-    );
+      body: FutureBuilder<BuoySearchInfo>(
+        future: _buoyListFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData || snapshot.data!.buoys.isEmpty) {
+            return const Center(child: Text('No buoys found'));
+          }
+          return ListView.builder(
+            itemCount: snapshot.data!.buoys.length,
+            itemBuilder: (context, index) {
+              double baseHeight = MediaQuery.of(context).size.height;
 
+              return Container(
+                height: baseHeight * 0.2,
+                child: BuoyCard(buoy: snapshot.data!.buoys[index]),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class BuoySearchDelegate extends SearchDelegate {
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    // Отображение подсказок поиска
+    if (query.isEmpty) {
+      return const Center(child: Text('Enter a search term to begin'));
+    }
+    return FutureBuilder<BuoySearchInfo>(
+      future: searchBuoy(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        if (!snapshot.hasData || snapshot.data!.buoys.isEmpty) {
+          return const Center(child: Text('No buoys found'));
+        }
+        return _buildBuoyList(snapshot.data!.buoys);
+      },
+    );
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    // Отображение результатов поиска
+    return FutureBuilder<BuoySearchInfo>(
+      future: searchBuoy(query),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        if (!snapshot.hasData || snapshot.data!.buoys.isEmpty) {
+          return const Center(child: Text('No buoys found'));
+        }
+        return _buildBuoyList(snapshot.data!.buoys);
+      },
+    );
+  }
+
+  Widget _buildBuoyList(List<BuoyMapInfo> buoys) {
+    // Метод для построения списка карточек буйков
+    return ListView.builder(
+      itemCount: buoys.length,
+      itemBuilder: (context, index) {
+        double baseHeight = MediaQuery.of(context).size.height;
+
+        return Container(
+          height: baseHeight * 0.2,
+          child: BuoyCard(buoy: buoys[index]),
+        );
+      },
+    );
+  }
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    // Действия в AppBar для очистки поиска
+    return [
+      if (query.isNotEmpty)
+        IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            query = '';
+            showSuggestions(context);
+          },
+        ),
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    // Ведущий виджет в AppBar (обычно кнопка "назад")
+    return IconButton(
+      icon: const Icon(Icons.arrow_back_ios_sharp),
+      onPressed: () {
+        close(context, null);
+      },
+    );
+  }
+
+  @override
+  void close(BuildContext context, result) {
+    super.close(context, ''); // передача пустой строки как результата
   }
 }

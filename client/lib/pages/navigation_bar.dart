@@ -1,11 +1,15 @@
 import 'package:client/pages/main_pages/main_buoys_page.dart';
 import 'package:client/pages/main_pages/main_map_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
+import 'main_pages/main_more_page.dart';
 import 'main_pages/main_sharks_page.dart';
 
 
 class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key});
+
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -14,9 +18,10 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
-    MapPage(),
-    SharksPage(),
-    BuoysPage(),
+    const MapPage(),
+    const SharksPage(),
+    const BuoysPage(),
+    MorePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -33,20 +38,34 @@ class _MyHomePageState extends State<MyHomePage> {
       // ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Карта',
+            icon: SvgPicture.asset('IconMap.svg', semanticsLabel: 'MapIcon', color: _selectedIndex == 0 ? Colors.blue : Colors.grey),
+            label: 'Map',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.tsunami),
-            label: 'Акулы',
+            icon: SvgPicture.asset('IconShark.svg', semanticsLabel: 'SharkIcon', color: _selectedIndex == 1 ? Colors.blue : Colors.grey),
+            label: 'Sharks',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.anchor),
-            label: 'Буйки',
+            icon: SvgPicture.asset('IconBuoy.svg', semanticsLabel: 'BuoyIcon', color: _selectedIndex == 2 ? Colors.blue : Colors.grey),
+            label: 'Buoys',
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset('IconMore.svg', semanticsLabel: 'MoreIcon', color: _selectedIndex == 3 ? Colors.blue : Colors.grey),
+            label: 'More',
           ),
         ],
+        selectedLabelStyle: const TextStyle(
+          fontFamily:  "inter",
+          fontSize: 0,
+          color: Colors.blue,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontFamily:  "inter",
+          fontSize: 0,
+          color: Colors.grey,
+        ),
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
