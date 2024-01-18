@@ -1,15 +1,18 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 
 import '../../api/about.dart';
 
 class MorePage extends StatelessWidget {
+  const MorePage({super.key});
+
   @override
   Widget build(BuildContext context) {
+    double baseSizeHeight = MediaQuery.of(context).size.height;
+    double baseFontSize = baseSizeHeight * 0.03;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('More'),
+        title: const Text('More', style: TextStyle(fontFamily: 'Inter', fontSize: 25)),
         centerTitle: true,
       ),
       body: ListView(
@@ -17,22 +20,22 @@ class MorePage extends StatelessWidget {
           context: context,
           tiles: [
             ListTile(
-              title: Text('About white sharks'),
+              title: Text('About white sharks', style: TextStyle(fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
               onTap: () {
                 // Обработка нажатия, переход на страницу "About white sharks"
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AboutWhiteSharksPage()),
+                  MaterialPageRoute(builder: (context) => const AboutWhiteSharksPage()),
                 );
               },
             ),
             ListTile(
-              title: Text('About project'),
+              title: Text('About project', style: TextStyle(fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
               onTap: () {
                 // Обработка нажатия, переход на страницу "About project"
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AboutProjectPage()),
+                  MaterialPageRoute(builder: (context) => const AboutProjectPage()),
                 );
               },
             ),
@@ -45,11 +48,16 @@ class MorePage extends StatelessWidget {
 
 // Заглушка для страницы "About white sharks"
 class AboutWhiteSharksPage extends StatelessWidget {
+  const AboutWhiteSharksPage({super.key});
+
   @override
   Widget build(BuildContext context) {
+    double baseSizeHeight = MediaQuery.of(context).size.height;
+    double baseFontSize = baseSizeHeight * 0.03;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About white sharks'),
+        title: const Text('About white sharks', style: TextStyle(fontFamily: 'Inter', fontSize: 25)),
         centerTitle: true,
       ),
       body: FutureBuilder<AboutSharksInfo>(
@@ -57,7 +65,7 @@ class AboutWhiteSharksPage extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Если данные еще не получены, показываем индикатор загрузки
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             // Если произошла ошибка при загрузке данных
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -68,16 +76,19 @@ class AboutWhiteSharksPage extends StatelessWidget {
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: <Widget>[
-                    Image.network(snapshot.data!.photo),
-                    SizedBox(height: 16), // Добавляем немного пространства между изображением и текстом
-                    Text(snapshot.data!.info, style: TextStyle(fontSize: 16)),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15.0), // Радиус закругления
+                      child: Image.network(snapshot.data!.photo),
+                    ),
+                    const SizedBox(height: 16), // Добавляем немного пространства между изображением и текстом
+                    Text(snapshot.data!.info, style: TextStyle(fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
                   ],
                 ),
               ),
             );
           } else {
             // Если данных нет, показываем сообщение об этом
-            return Center(child: Text('No data available'));
+            return const Center(child: Text('No data available'));
           }
         },
       ),
@@ -87,11 +98,16 @@ class AboutWhiteSharksPage extends StatelessWidget {
 
 // Заглушка для страницы "About project"
 class AboutProjectPage extends StatelessWidget {
+  const AboutProjectPage({super.key});
+
   @override
   Widget build(BuildContext context) {
+    double baseSizeHeight = MediaQuery.of(context).size.height;
+    double baseFontSize = baseSizeHeight * 0.03;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About project'),
+        title: const Text('About project', style: TextStyle(fontFamily: 'Inter', fontSize: 25)),
         centerTitle: true,
       ),
       body: FutureBuilder<AboutProjectInfo>(
@@ -99,7 +115,7 @@ class AboutProjectPage extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             // Если данные еще не получены, показываем индикатор загрузки
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             // Если произошла ошибка при загрузке данных
             return Center(child: Text('Error: ${snapshot.error}'));
@@ -107,11 +123,11 @@ class AboutProjectPage extends StatelessWidget {
             // Когда данные успешно загружены, отображаем их
             return Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text(snapshot.data!.info, style: TextStyle(fontSize: 16)),
+              child: Text(snapshot.data!.info, style: TextStyle(fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
             );
           } else {
             // Если данных нет, показываем сообщение об этом
-            return Center(child: Text('No data available'));
+            return const Center(child: Text('No data available'));
           }
         },
       ),

@@ -1,6 +1,3 @@
-import 'dart:typed_data';
-
-import 'package:client/models/positions.dart';
 import 'package:client/models/shark.dart';
 import 'package:latlong2/latlong.dart';
 
@@ -11,9 +8,8 @@ class BuoyMapInfo {
   List<double> location; // tuple[float, float]
   int pings;
   int detectedSharks;
-  int detectedTracks;
   String lastPing; // datetime в формате ISO
-  List<ShortPositionInfo> sharksList;
+  List<String> sharksList;
 
   BuoyMapInfo({
     required this.id,
@@ -22,10 +18,29 @@ class BuoyMapInfo {
     required this.location,
     required this.pings,
     required this.detectedSharks,
-    required this.detectedTracks,
     required this.lastPing,
     required this.sharksList,
   });
+
+  // from json
+  static BuoyMapInfo fromJson(Map<String, dynamic> json) {
+    List<String> sharksList = [];
+
+    for (var shark in json['sharks_list']) {
+      sharksList.add(shark['id']);
+    }
+
+    return BuoyMapInfo(
+      id: json["id"],
+      name: json["name"],
+      photo: json["photo_url"],
+      location: [json["location"][0], json["location"][1]],
+      pings: json["pings"],
+      detectedSharks: json["detected_sharks"],
+      lastPing: json["last_ping"].substring(0, 10),  // Обрезать
+      sharksList: sharksList,
+    );
+  }
 }
 
 class BuoySearchInfo {
@@ -34,6 +49,19 @@ class BuoySearchInfo {
   BuoySearchInfo({
     required this.buoys,
   });
+
+  // from json
+  static BuoySearchInfo fromJson(List<dynamic> json) {
+    List<BuoyMapInfo> buoys = [];
+
+    for (var buoy in json) {
+      buoys.add(BuoyMapInfo.fromJson(buoy));
+    }
+
+    return BuoySearchInfo(
+      buoys: buoys,
+    );
+  }
 }
 
 
@@ -65,4 +93,29 @@ class BuoyFullInfo {
     required this.lastPing,
     required this.sharksList,
   });
+
+  // from json
+
+  static BuoyFullInfo fromJson(Map<String, dynamic> json) {
+    List<SharkMapInfo> sharksList = [];
+
+    for (var buoy in json['sharks_list']) {
+      sharksList.add(SharkMapInfo.fromJson(buoy));
+    }
+
+    return BuoyFullInfo(
+      id: json["id"],
+      name: json["name"],
+      photo: json["photo_url"],
+      location: LatLng(json["location"][0], json["location"][1]),
+      status: json["status"],
+      pings: json["pings"],
+      activeBuoyDays: json["active_buoy_days"],
+      detectedSharks: json["detected_sharks"],
+      dateOfPlacement: json["date_of_placement"].substring(0, 10),
+      description: json["description"],
+      lastPing: json["last_ping"].substring(0, 10),
+      sharksList: sharksList,
+    );
+  }
 }

@@ -1,28 +1,37 @@
-// Функция поиска буев
+import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
+import 'dart:convert';
 
 import '../models/buoy.dart';
 import '../models/config.dart';
-import 'map.dart';
 
 Future<BuoySearchInfo> searchBuoy(String query) async {
-  // Список захардкодированных буев (пример)
-  List<BuoyMapInfo> allBuoys = [
-    await getBuoyMapInfo("buoy1")
-    // Добавьте дополнительные буи здесь
-  ];
+  String url = "${Config.apiUrl}/buoys/get_by_name/$query/";
 
-  // Фильтрация списка буев по введенному запросу
-  // List<BuoyMapInfo> filteredBuoys = allBuoys.where((buoy) {
-  //   return buoy.name.toLowerCase().contains(query.toLowerCase());
-  // }).toList();
+  var response = await http.get(Uri.parse(url));
 
-  return BuoySearchInfo(buoys: allBuoys);
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
+
+    return BuoySearchInfo.fromJson(data);
+  }
+
+  return BuoySearchInfo(buoys: []);
 }
 
 
 Future<BuoyFullInfo> getBuoyFullInfo(String buoyId) async {
-  // Захардкодированные данные
+  String url = "${Config.apiUrl}/buoys/get_by_id/$buoyId/";
+
+  var response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
+
+    return BuoyFullInfo.fromJson(data);
+  }
+
+
   return BuoyFullInfo(
     id: buoyId,
     name: "Buoy Name",
@@ -35,8 +44,6 @@ Future<BuoyFullInfo> getBuoyFullInfo(String buoyId) async {
     dateOfPlacement: "2023-01-01",
     description: "Detailed description of the buoy.",
     lastPing: "2024-01-07",
-    sharksList: [
-      await getSharkMapInfo("shark1")
-    ],
+    sharksList: [],
   );
 }

@@ -39,7 +39,7 @@ class BuoyDetailsPageState extends State<BuoyDetailsPage> with SingleTickerProvi
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.buoyFullInfo.name),
+        title: Text(widget.buoyFullInfo.name, style: const TextStyle(fontFamily: 'Inter', fontSize: 25)),
         // center it
         centerTitle: true,
       ),
@@ -52,8 +52,8 @@ class BuoyDetailsPageState extends State<BuoyDetailsPage> with SingleTickerProvi
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  InfoLine(label: 'ID', value: widget.buoyFullInfo.id, baseFontSize: baseFontSize),
-                  SizedBox(height: baseFontSize * 0.2),
+                  // InfoLine(label: 'ID', value: widget.buoyFullInfo.id, baseFontSize: baseFontSize),
+                  // SizedBox(height: baseFontSize * 0.2),
                   InfoLine(label: 'Location', value: '${widget.buoyFullInfo.location.latitude.toStringAsFixed(2)}, ${widget.buoyFullInfo.location.longitude.toStringAsFixed(2)}', baseFontSize: baseFontSize),
                   SizedBox(height: baseFontSize * 0.2),
                   InfoLine(label: 'Status', value: widget.buoyFullInfo.status, baseFontSize: baseFontSize),

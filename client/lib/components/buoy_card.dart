@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import '../api/buoys.dart';
-import '../api/map.dart';
 import '../models/buoy.dart';
-import '../models/shark.dart';
 import '../pages/details/buoy_details_page.dart';
 
 class BuoyCard extends StatelessWidget {
@@ -23,16 +21,11 @@ class BuoyCard extends StatelessWidget {
       elevation: 2, // Небольшая тень для карточки
       child: InkWell(
         onTap: () async {
-          List<SharkMapInfo> sharks = [];
-
-          for (var data in buoy.sharksList) {
-              sharks.add(await getSharkMapInfo(data.id));
-          }
-
           BuoyFullInfo buoyFullInfo = await getBuoyFullInfo(buoy.id);
+
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => BuoyDetailsPage(buoy: buoy, sharks: sharks, buoyFullInfo: buoyFullInfo)),
+            MaterialPageRoute(builder: (context) => BuoyDetailsPage(buoy: buoy, sharks: buoyFullInfo.sharksList, buoyFullInfo: buoyFullInfo)),
           );
         },
         child: Row(
@@ -58,7 +51,6 @@ class BuoyCard extends StatelessWidget {
                     InfoLine(label: 'Location', value: '${buoy.location[0].toStringAsFixed(2)}, ${buoy.location[1].toStringAsFixed(2)}', baseFontSize: baseFontSize),
                     InfoLine(label: 'Pings', value: '${buoy.pings}', baseFontSize: baseFontSize),
                     InfoLine(label: 'Sharks', value: '${buoy.detectedSharks}', baseFontSize: baseFontSize),
-                    InfoLine(label: 'Tracks', value: '${buoy.detectedTracks}', baseFontSize: baseFontSize),
                     InfoLine(label: 'Last ping', value: buoy.lastPing, baseFontSize: baseFontSize),
                   ],
                 ),

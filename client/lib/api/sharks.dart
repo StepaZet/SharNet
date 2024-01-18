@@ -1,24 +1,35 @@
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 import '../models/config.dart';
 import '../models/shark.dart';
-import 'map.dart';
 
 Future<SharkSearchInfo> searchShark(String query) async {
-  // Список захардкодированных акул (пример)
-  List<SharkMapInfo> allSharks = [
-    await getSharkMapInfo("shark1"),
-    // Добавьте дополнительные акулы здесь
-  ];
+  String url = "${Config.apiUrl}/sharks/get_by_name/$query/";
 
-  // Фильтрация списка акул по введенному запросу
-  // List<SharkMapInfo> filteredSharks = allSharks.where((shark) {
-  //   return shark.name.toLowerCase().contains(query.toLowerCase());
-  // }).toList();
+  var response = await http.get(Uri.parse(url));
 
-  return SharkSearchInfo(sharks: allSharks);
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
+
+    return SharkSearchInfo.fromJson(data);
+  }
+
+  return SharkSearchInfo(sharks: []);
 }
 
 Future<SharkFullInfo> getSharkFullInfo(String sharkId) async {
-  // Захардкодированные данные
+  String url = "${Config.apiUrl}/sharks/get_by_id/$sharkId/";
+
+  var response = await http.get(Uri.parse(url));
+
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
+
+    return SharkFullInfo.fromJson(data);
+  }
+
+
   return SharkFullInfo(
     id: sharkId,
     name: "Great White Shark",
@@ -35,9 +46,10 @@ Future<SharkFullInfo> getSharkFullInfo(String sharkId) async {
     firstTagged: "2019-01-01",
     lastTagged: "2024-01-01",
 
-    buoysList: [
-      await getBuoyMapInfo("buoy1"),
-    ],
+    buoysList: [],
+
+    topLength: [],
+    topWeight: [],
 
     averageLength: 4.5,
     averageWeight: 1100.0,

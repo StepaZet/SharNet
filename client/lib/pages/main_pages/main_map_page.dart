@@ -112,6 +112,7 @@ class MapPageState extends State<MapPage> {
             TextButton(
               child: const Text('OK'),
               onPressed: () {
+                setState(() {});
                 Config.defaultStartDate = _startDate;
                 Config.defaultEndDate = _endDate;
                 Navigator.pop(context);
@@ -189,7 +190,7 @@ class MapPageState extends State<MapPage> {
         bottom: 20.0,
         left: 10.0,
         child: Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -198,10 +199,10 @@ class MapPageState extends State<MapPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              _buildLegendItem('Shark', 'MarkerShark.svg'),
+              _buildLegendItem('Shark', 'assets/MarkerShark.svg'),
               // Замените на путь к вашему ресурсу иконки
-              SizedBox(height: 8),
-              _buildLegendItem('Buoy', 'MarkerBuoy.svg'),
+              const SizedBox(height: 8),
+              _buildLegendItem('Buoy', 'assets/MarkerBuoy.svg'),
               // Замените на путь к вашему ресурсу иконки
             ],
           ),
@@ -237,6 +238,7 @@ class MapPageState extends State<MapPage> {
             center: lastCenter,
             zoom: zoom,
             plugins: [MarkerClusterPlugin()],
+            interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
           ),
           layers: [
             TileLayerOptions(
@@ -274,10 +276,10 @@ class MapPageState extends State<MapPage> {
     markers.addAll(info.sharks.map((shark) => _createMarker(shark, 'shark')));
     markers.addAll(info.buoys.map((buoy) => _createMarker(buoy, 'buoy')));
 
-    if (_selectedShark != null) {
-      markers.addAll(getPoints(_selectedShark!)
-          .map((point) => _createMarkerForPoint(point)));
-    }
+    // if (_selectedShark != null) {
+    //   markers.addAll(getPoints(_selectedShark!)
+    //       .map((point) => _createMarkerForPoint(point)));
+    // }
 
     return markers;
   }
@@ -290,7 +292,7 @@ class MapPageState extends State<MapPage> {
       builder: (ctx) => GestureDetector(
         onTap: () {},
         child: SvgPicture.asset(
-          'MarkerPoint.svg',
+          'assets/MarkerPoint.svg',
           semanticsLabel: 'Point Marker',
         ),
       ),
@@ -304,19 +306,18 @@ class MapPageState extends State<MapPage> {
 
     if (type == 'shark') {
       onTap = () async => await _selectShark(data);
-      imagePath = 'MarkerShark.svg';
+      imagePath = 'assets/MarkerShark.svg';
       semanticsLabel = 'Shark Marker';
     } else if (type == 'buoy') {
       onTap = () async => await _selectBuoy(data);
-      imagePath = 'MarkerBuoy.svg';
+      imagePath = 'assets/MarkerBuoy.svg';
       semanticsLabel = 'Buoy Marker';
     } else {
       onTap = () {};
-      imagePath = 'MarkerPoint.svg';
+      imagePath = 'assets/MarkerPoint.svg';
       semanticsLabel = 'Point Marker';
     }
 
-    // SvgPicture.asset('MarkerPoint.svg', semanticsLabel: 'Point Marker')
     return Marker(
       width: 20.0, // Установите требуемый размер
       height: 20.0, // Установите требуемый размер
@@ -329,7 +330,7 @@ class MapPageState extends State<MapPage> {
   }
 
   Future<void> _selectShark(ShortPositionInfo shark) async {
-    SharkMapInfo sharkInfo = await getSharkMapInfo(shark.id);
+    SharkMapInfo sharkInfo = await getSharkMapInfo(shark.id, Config.defaultStartDate, Config.defaultEndDate);
 
     setState(() {
       _selectedShark = sharkInfo;
@@ -340,7 +341,7 @@ class MapPageState extends State<MapPage> {
   }
 
   Future<void> _selectBuoy(ShortPositionInfo buoy) async {
-    BuoyMapInfo buoyInfo = await getBuoyMapInfo(buoy.id);
+    BuoyMapInfo buoyInfo = await getBuoyMapInfo(buoy.id, Config.defaultStartDate, Config.defaultEndDate);
 
     setState(() {
       _selectedBuoy = buoyInfo;

@@ -7,10 +7,10 @@ class BuoysPage extends StatefulWidget {
   const BuoysPage({Key? key}) : super(key: key);
 
   @override
-  _BuoysPageState createState() => _BuoysPageState();
+  BuoysPageState createState() => BuoysPageState();
 }
 
-class _BuoysPageState extends State<BuoysPage> {
+class BuoysPageState extends State<BuoysPage> {
   late Future<BuoySearchInfo> _buoyListFuture;
 
   @override
@@ -23,7 +23,7 @@ class _BuoysPageState extends State<BuoysPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Buoys'),
+        title: const Text('Buoys', style: TextStyle(fontFamily: 'Inter', fontSize: 25)),
         centerTitle: true,
         actions: [
           IconButton(
@@ -57,7 +57,7 @@ class _BuoysPageState extends State<BuoysPage> {
             itemBuilder: (context, index) {
               double baseHeight = MediaQuery.of(context).size.height;
 
-              return Container(
+              return SizedBox(
                 height: baseHeight * 0.2,
                 child: BuoyCard(buoy: snapshot.data!.buoys[index]),
               );
@@ -73,9 +73,9 @@ class BuoySearchDelegate extends SearchDelegate {
   @override
   Widget buildSuggestions(BuildContext context) {
     // Отображение подсказок поиска
-    if (query.isEmpty) {
-      return const Center(child: Text('Enter a search term to begin'));
-    }
+    // if (query.isEmpty) {
+    //   return const Center(child: Text('Enter a search term to begin'));
+    // }
     return FutureBuilder<BuoySearchInfo>(
       future: searchBuoy(query),
       builder: (context, snapshot) {
@@ -120,7 +120,7 @@ class BuoySearchDelegate extends SearchDelegate {
       itemBuilder: (context, index) {
         double baseHeight = MediaQuery.of(context).size.height;
 
-        return Container(
+        return SizedBox(
           height: baseHeight * 0.2,
           child: BuoyCard(buoy: buoys[index]),
         );
@@ -130,7 +130,6 @@ class BuoySearchDelegate extends SearchDelegate {
 
   @override
   List<Widget> buildActions(BuildContext context) {
-    // Действия в AppBar для очистки поиска
     return [
       if (query.isNotEmpty)
         IconButton(
@@ -145,7 +144,6 @@ class BuoySearchDelegate extends SearchDelegate {
 
   @override
   Widget buildLeading(BuildContext context) {
-    // Ведущий виджет в AppBar (обычно кнопка "назад")
     return IconButton(
       icon: const Icon(Icons.arrow_back_ios_sharp),
       onPressed: () {

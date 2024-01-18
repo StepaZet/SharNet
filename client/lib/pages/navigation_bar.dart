@@ -11,17 +11,17 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  MyHomePageState createState() => MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   static final List<Widget> _widgetOptions = <Widget>[
     const MapPage(),
     const SharksPage(),
     const BuoysPage(),
-    MorePage(),
+    const MorePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -33,26 +33,23 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('Navigation App'),
-      // ),
       body: _widgetOptions.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('IconMap.svg', semanticsLabel: 'MapIcon', color: _selectedIndex == 0 ? Colors.blue : Colors.grey),
+            icon: SvgPicture.asset('assets/IconMap.svg', semanticsLabel: 'MapIcon', color: _selectedIndex == 0 ? Colors.blue : Colors.grey),
             label: 'Map',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('IconShark.svg', semanticsLabel: 'SharkIcon', color: _selectedIndex == 1 ? Colors.blue : Colors.grey),
+            icon: SvgPicture.asset('assets/IconShark.svg', semanticsLabel: 'SharkIcon', color: _selectedIndex == 1 ? Colors.blue : Colors.grey),
             label: 'Sharks',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('IconBuoy.svg', semanticsLabel: 'BuoyIcon', color: _selectedIndex == 2 ? Colors.blue : Colors.grey),
+            icon: SvgPicture.asset('assets/IconBuoy.svg', semanticsLabel: 'BuoyIcon', color: _selectedIndex == 2 ? Colors.blue : Colors.grey),
             label: 'Buoys',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('IconMore.svg', semanticsLabel: 'MoreIcon', color: _selectedIndex == 3 ? Colors.blue : Colors.grey),
+            icon: SvgPicture.asset('assets/IconMore.svg', semanticsLabel: 'MoreIcon', color: _selectedIndex == 3 ? Colors.blue : Colors.grey),
             label: 'More',
           ),
         ],

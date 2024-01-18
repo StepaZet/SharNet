@@ -108,6 +108,7 @@ class BuoyMapState extends State<BuoyMap> {
             TextButton(
               child: const Text('OK'),
               onPressed: () {
+                setState(() {});
                 Config.defaultStartDate = _startDate;
                 Config.defaultEndDate = _endDate;
                 Navigator.pop(context);
@@ -127,6 +128,7 @@ class BuoyMapState extends State<BuoyMap> {
           options: MapOptions(
             center: LatLng(widget.locationLatitude, widget.locationLongitude),
             zoom: 3.2,
+            interactiveFlags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
           ),
           layers: [
             TileLayerOptions(
@@ -144,7 +146,7 @@ class BuoyMapState extends State<BuoyMap> {
                       LatLng(widget.locationLatitude, widget.locationLongitude),
                   builder: (ctx) => GestureDetector(
                     onTap: () {},
-                    child: SvgPicture.asset('MarkerBuoy.svg',
+                    child: SvgPicture.asset('assets/MarkerBuoy.svg',
                         semanticsLabel: 'Buoy Marker'),
                   ),
                 ),
