@@ -4,24 +4,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'main_pages/main_more_page.dart';
+import 'main_pages/main_profile_page.dart';
 import 'main_pages/main_sharks_page.dart';
 
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final Type? selectedWidget;
+
+  const MyHomePage({super.key, this.selectedWidget = null});
 
   @override
-  MyHomePageState createState() => MyHomePageState();
+  MyHomePageState createState() => MyHomePageState(selectedWidget);
 }
 
 class MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
+
+  MyHomePageState(Type? selectedWidget){
+    for (int i = 0; i < _widgetOptions.length; i++) {
+      if (selectedWidget == _widgetOptions[i].runtimeType) {
+        _selectedIndex = i;
+        break;
+      }
+    }
+  }
 
   static final List<Widget> _widgetOptions = <Widget>[
     const MapPage(),
     const SharksPage(),
     const BuoysPage(),
     const MorePage(),
+    const ProfilePage(),
   ];
 
   void _onItemTapped(int index) {
@@ -50,6 +63,10 @@ class MyHomePageState extends State<MyHomePage> {
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset('assets/IconMore.svg', semanticsLabel: 'MoreIcon', color: _selectedIndex == 3 ? Colors.blue : Colors.grey),
+            label: 'More',
+          ),
+          BottomNavigationBarItem(
+            icon: SvgPicture.asset('assets/IconProfile.svg', semanticsLabel: 'ProfileIcon', color: _selectedIndex == 4 ? Colors.blue : Colors.grey),
             label: 'More',
           ),
         ],

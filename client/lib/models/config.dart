@@ -1,5 +1,5 @@
 class Config {
-  static DateTime defaultStartDate = DateTime.now().subtract(const Duration(days: 7));
+  static DateTime defaultStartDate = DateTime.now().subtract(const Duration(days: 180));
   static DateTime defaultEndDate = DateTime.now();
 
   static const String simpleMapUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
@@ -8,4 +8,6 @@ class Config {
   static const String defaultSharkUrl = 'https://cdn.mos.cms.futurecdn.net/yBBaWKG8MiNNAVfE4Z2aRJ-1200-80.jpg';
 
   static const String apiUrl = 'http://51.250.93.227:8000';
+
+  static String? accessToken;
 }

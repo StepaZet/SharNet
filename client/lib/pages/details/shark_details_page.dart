@@ -191,7 +191,7 @@ class SharkPageState extends State<SharkPage>
             const Divider(),
             const SizedBox(height: 8),
             InfoLine(
-                label: 'Average values for this age:',
+                label: 'Average values:',
                 value: "",
                 baseFontSize: baseFontSize),
             SizedBox(height: baseFontSize * 0.6),
