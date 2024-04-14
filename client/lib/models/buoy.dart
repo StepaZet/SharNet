@@ -5,7 +5,7 @@ class BuoyMapInfo {
   String id;
   String name;
   String photo; // bytes для изображения
-  List<double> location; // tuple[float, float]
+  LatLng location; // tuple[float, float]
   int pings;
   int detectedSharks;
   String lastPing; // datetime в формате ISO
@@ -34,7 +34,7 @@ class BuoyMapInfo {
       id: json["id"],
       name: json["name"],
       photo: json["photo_url"],
-      location: [json["location"][0], json["location"][1]],
+      location: LatLng(json["location"][0], json["location"][1]),
       pings: json["pings"],
       detectedSharks: json["detected_sharks"],
       lastPing: json["last_ping"].substring(0, 10),  // Обрезать

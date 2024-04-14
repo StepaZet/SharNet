@@ -1,5 +1,8 @@
 import 'package:client/models/buoy.dart';
 import 'package:client/models/positions.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 class SharkMapInfo {
   String id;
@@ -57,6 +60,36 @@ class SharkMapInfo {
       // Обрезать
       tracksList: tracksList,
     );
+  }
+
+  // List<PointInfo> getPoints() {
+  //   List<PointInfo> points = [];
+  //   for (var track in tracksList) {
+  //     for (var point in track.skip(1)) {
+  //       points.add(point);
+  //     }
+  //   }
+  //
+  //   return points;
+  // }
+
+  List<Polyline> getRoute() {
+    List<Polyline> polylines = [];
+    for (var track in tracksList) {
+      List<LatLng> polylinePoints = [];
+      for (var point in track) {
+        // Добавляем точку в полилинию
+        polylinePoints.add(
+            LatLng(point.coordinates.latitude, point.coordinates.longitude));
+      }
+      // Добавляем полилинию в список
+      polylines.add(Polyline(
+        points: polylinePoints,
+        color: Colors.blueAccent,
+        strokeWidth: 2.0,
+      ));
+    }
+    return polylines;
   }
 }
 

@@ -1,88 +1,70 @@
 import 'package:client/pages/main_pages/main_buoys_page.dart';
 import 'package:client/pages/main_pages/main_map_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'main_pages/main_more_page.dart';
 import 'main_pages/main_profile_page.dart';
 import 'main_pages/main_sharks_page.dart';
 
+// Provider to hold the currently selected page index
+final selectedPageProvider = StateProvider((ref) => 0);
 
-class MyHomePage extends StatefulWidget {
-  final Type? selectedWidget;
-
-  const MyHomePage({super.key, this.selectedWidget = null});
-
-  @override
-  MyHomePageState createState() => MyHomePageState(selectedWidget);
-}
-
-class MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
-
-  MyHomePageState(Type? selectedWidget){
-    for (int i = 0; i < _widgetOptions.length; i++) {
-      if (selectedWidget == _widgetOptions[i].runtimeType) {
-        _selectedIndex = i;
-        break;
-      }
-    }
-  }
-
-  static final List<Widget> _widgetOptions = <Widget>[
-    const MapPage(),
-    const SharksPage(),
-    const BuoysPage(),
-    const MorePage(),
-    const ProfilePage(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+class MyHomePage extends ConsumerWidget {
+  const MyHomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedPageIndex = ref.watch(selectedPageProvider);
+
     return Scaffold(
-      body: _widgetOptions.elementAt(_selectedIndex),
+      body: _widgetOptions.elementAt(selectedPageIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/IconMap.svg', semanticsLabel: 'MapIcon', color: _selectedIndex == 0 ? Colors.blue : Colors.grey),
+            icon: SvgPicture.asset('assets/IconMap.svg', semanticsLabel: 'MapIcon', color: selectedPageIndex == 0 ? Colors.blue : Colors.grey),
             label: 'Map',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/IconShark.svg', semanticsLabel: 'SharkIcon', color: _selectedIndex == 1 ? Colors.blue : Colors.grey),
+            icon: SvgPicture.asset('assets/IconShark.svg', semanticsLabel: 'SharkIcon', color: selectedPageIndex == 1 ? Colors.blue : Colors.grey),
             label: 'Sharks',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/IconBuoy.svg', semanticsLabel: 'BuoyIcon', color: _selectedIndex == 2 ? Colors.blue : Colors.grey),
+            icon: SvgPicture.asset('assets/IconBuoy.svg', semanticsLabel: 'BuoyIcon', color: selectedPageIndex == 2 ? Colors.blue : Colors.grey),
             label: 'Buoys',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/IconMore.svg', semanticsLabel: 'MoreIcon', color: _selectedIndex == 3 ? Colors.blue : Colors.grey),
+            icon: SvgPicture.asset('assets/IconMore.svg', semanticsLabel: 'MoreIcon', color: selectedPageIndex == 3 ? Colors.blue : Colors.grey),
             label: 'More',
           ),
           BottomNavigationBarItem(
-            icon: SvgPicture.asset('assets/IconProfile.svg', semanticsLabel: 'ProfileIcon', color: _selectedIndex == 4 ? Colors.blue : Colors.grey),
-            label: 'More',
+            icon: SvgPicture.asset('assets/IconProfile.svg', semanticsLabel: 'ProfileIcon', color: selectedPageIndex == 4 ? Colors.blue : Colors.grey),
+            label: 'Profile',
           ),
         ],
         selectedLabelStyle: const TextStyle(
-          fontFamily:  "inter",
+          fontFamily: "inter",
           fontSize: 0,
           color: Colors.blue,
         ),
         unselectedLabelStyle: const TextStyle(
-          fontFamily:  "inter",
+          fontFamily: "inter",
           fontSize: 0,
           color: Colors.grey,
         ),
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        currentIndex: selectedPageIndex,
+        onTap: (int index) => ref.read(selectedPageProvider.notifier).state = index,
       ),
     );
   }
 }
+
+// List of available pages
+const List<Widget> _widgetOptions = [
+  ProviderScope(child: MainMapPage()),
+  ProviderScope(child: SharksPage()),
+  ProviderScope(child: BuoysPage()),
+  ProviderScope(child: MorePage()),
+  ProviderScope(child: ProfilePage()),
+];

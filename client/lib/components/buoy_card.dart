@@ -48,7 +48,7 @@ class BuoyCard extends StatelessWidget {
                   children: <Widget>[
                     Text(buoy.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: baseFontSize * 0.8)),
                     SizedBox(height: baseFontSize * 0.1), // Расстояние между элементами
-                    InfoLine(label: 'Location', value: '${buoy.location[0].toStringAsFixed(2)}, ${buoy.location[1].toStringAsFixed(2)}', baseFontSize: baseFontSize),
+                    InfoLine(label: 'Location', value: '${buoy.location.latitude.toStringAsFixed(2)}, ${buoy.location.longitude.toStringAsFixed(2)}', baseFontSize: baseFontSize),
                     InfoLine(label: 'Pings', value: '${buoy.pings}', baseFontSize: baseFontSize),
                     InfoLine(label: 'Sharks', value: '${buoy.detectedSharks}', baseFontSize: baseFontSize),
                     InfoLine(label: 'Last ping', value: buoy.lastPing, baseFontSize: baseFontSize),
