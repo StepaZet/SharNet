@@ -25,7 +25,7 @@ class BuoyCard extends StatelessWidget {
 
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => BuoyDetailsPage(buoy: buoy, sharks: buoyFullInfo.sharksList, buoyFullInfo: buoyFullInfo)),
+            MaterialPageRoute(builder: (context) => BuoyDetails(buoyFullInfo: buoyFullInfo)),
           );
         },
         child: Row(

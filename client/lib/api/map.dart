@@ -7,16 +7,17 @@ import '../models/config.dart';
 import '../models/positions.dart';
 import '../models/shark.dart';
 
+Future<MapShortInfo> getMapShortInfo(
+    DateTime startDate, DateTime endDate) async {
+  String url =
+      "${Config.apiUrl}/common/by_date/?date_from=${startDate.toIso8601String()}&date_to=${endDate.toIso8601String()}";
 
-Future<MapShortInfo> getMapShortInfo(DateTime startDate, DateTime endDate) async{
-  String url = "${Config.apiUrl}/common/by_date/?date_from=${startDate.toIso8601String()}&date_to=${endDate.toIso8601String()}";
+  var response = await http.get(Uri.parse(url));
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
 
-  // var response = await http.get(Uri.parse(url));
-  // if (response.statusCode == 200) {
-  //   var data = jsonDecode(response.body);
-  //
-  //   return MapShortInfo.fromJson(data);
-  // }
+    return MapShortInfo.fromJson(data);
+  }
 
   return MapShortInfo(sharks: [
     ShortPositionInfo(coordinates: LatLng(37.4219983, -122.0840579), id: "1"),
@@ -27,10 +28,10 @@ Future<MapShortInfo> getMapShortInfo(DateTime startDate, DateTime endDate) async
   ]);
 }
 
-
-Future<BuoyMapInfo> getBuoyMapInfo(String buoyId, DateTime start, DateTime end) async{
-
-  String url = "${Config.apiUrl}/buoys/by_id_and_date/$buoyId/?date_from=${start.toIso8601String()}&date_to=${end.toIso8601String()}";
+Future<BuoyMapInfo> getBuoyMapInfo(
+    String buoyId, DateTime start, DateTime end) async {
+  String url =
+      "${Config.apiUrl}/buoys/by_id_and_date/$buoyId/?date_from=${start.toIso8601String()}&date_to=${end.toIso8601String()}";
 
   var response = await http.get(Uri.parse(url));
 
@@ -39,7 +40,6 @@ Future<BuoyMapInfo> getBuoyMapInfo(String buoyId, DateTime start, DateTime end) 
 
     return BuoyMapInfo.fromJson(data);
   }
-
 
   // Захардкодированные данные для буя
   return BuoyMapInfo(
@@ -54,34 +54,41 @@ Future<BuoyMapInfo> getBuoyMapInfo(String buoyId, DateTime start, DateTime end) 
   );
 }
 
+Future<SharkMapInfo> getSharkMapInfo(
+    String sharkId, DateTime start, DateTime end) async {
+  String url =
+      "${Config.apiUrl}/sharks/get_by_id_and_date/$sharkId/?date_from=${start.toIso8601String()}&date_to=${end.toIso8601String()}";
 
-Future<SharkMapInfo> getSharkMapInfo(String sharkId, DateTime start, DateTime end) async{
+  var response = await http.get(Uri.parse(url));
+  if (response.statusCode == 200) {
+    var data = jsonDecode(response.body);
 
-  // String url = "${Config.apiUrl}/sharks/get_by_id_and_date/$sharkId/?date_from=${start.toIso8601String()}&date_to=${end.toIso8601String()}";
-  //
-  // var response = await http.get(Uri.parse(url));
-  // if (response.statusCode == 200) {
-  //   var data = jsonDecode(response.body);
-  //
-  //   return SharkMapInfo.fromJson(data);
-  // }
-
+    return SharkMapInfo.fromJson(data);
+  }
 
   // Захардкодированные данные для акулы
   return SharkMapInfo(
     id: sharkId,
     name: "Great White Shark",
     photo: Config.defaultSharkUrl,
-    length: 5.5, // длина в метрах
-    weight: 1200.0, // вес в кг
+    length: 5.5,
+    // длина в метрах
+    weight: 1200.0,
+    // вес в кг
     sex: "Female",
     tracks: 1,
     lastTagged: "2023-12-15",
     tracksList: [
       [
-        PointInfo(coordinates: LatLng(37.4219983, -122.0840579), dateTime: DateTime.parse("2023-12-15T10:00:00Z")),
-        PointInfo(coordinates: LatLng(67.4220000, -122.0840575), dateTime: DateTime.parse("2023-12-15T11:00:00Z")),
-        PointInfo(coordinates: LatLng(50.4220000, -92.0840575), dateTime: DateTime.parse("2023-12-15T11:00:00Z"))
+        PointInfo(
+            coordinates: LatLng(37.4219983, -122.0840579),
+            dateTime: DateTime.parse("2023-12-15T10:00:00Z")),
+        PointInfo(
+            coordinates: LatLng(67.4220000, -122.0840575),
+            dateTime: DateTime.parse("2023-12-15T11:00:00Z")),
+        PointInfo(
+            coordinates: LatLng(50.4220000, -92.0840575),
+            dateTime: DateTime.parse("2023-12-15T11:00:00Z"))
       ],
     ],
   );

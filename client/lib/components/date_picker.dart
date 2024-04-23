@@ -8,7 +8,7 @@ final startDateProvider = StateProvider<DateTime>(
 final endDateProvider = StateProvider<DateTime>((ref) => DateTime.now());
 
 class DatePicker extends ConsumerStatefulWidget {
-  final List<Future<void> Function()> subscribers;
+  final List<Future<void> Function(WidgetRef)> subscribers;
 
   const DatePicker({super.key, this.subscribers = const []});
 
@@ -74,7 +74,7 @@ class _DatePickerState extends ConsumerState<DatePicker> {
                 ref.read(startDateProvider.notifier).state = startDateValue,
                 ref.read(endDateProvider.notifier).state = endDateValue,
 
-                Future.wait(widget.subscribers.map((subscriber) => subscriber())),
+                Future.wait(widget.subscribers.map((subscriber) => subscriber(ref))),
 
                 Navigator.pop(context),
               }

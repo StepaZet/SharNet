@@ -7,25 +7,28 @@ import 'package:latlong2/latlong.dart';
 
 import '../models/config.dart';
 
-// State provider for managing selected center and zoom
-final mapCenterProvider = StateProvider<LatLng>((ref) => const LatLng(37.4219999, -122.0862462));
+final mapCenterProvider =
+    StateProvider<LatLng>((ref) => const LatLng(37.4219999, -122.0862462));
 final mapZoomProvider = StateProvider<double>((ref) => 3.2);
-
-final mapMarkersProvider = StateProvider((ref) => <Marker>[]);
-final mapPolylineProvider = StateProvider((ref) => <Polyline>[]);
-
 
 class MapComponent extends ConsumerStatefulWidget {
   final MapController? mapController;
+  final StateProvider? _mapMarkersProvider;
+  final StateProvider? _mapPolylineProvider;
 
-  const MapComponent({super.key, this.mapController});
+  const MapComponent(
+      {super.key,
+      this.mapController,
+      StateProvider<dynamic>? mapMarkersProvider,
+      StateProvider<dynamic>? mapPolylineProvider})
+      : _mapPolylineProvider = mapPolylineProvider,
+        _mapMarkersProvider = mapMarkersProvider;
 
   @override
   ConsumerState<MapComponent> createState() => _MapComponentState();
 }
 
 class _MapComponentState extends ConsumerState<MapComponent> {
-
   @override
   Widget build(BuildContext contextf) {
     return FlutterMap(
@@ -44,19 +47,31 @@ class _MapComponentState extends ConsumerState<MapComponent> {
           );
         }),
         Consumer(builder: (context, ref, child) {
-          final polyline = ref.watch(mapPolylineProvider);
+          if (widget._mapPolylineProvider == null) {
+            return const SizedBox();
+          }
+
+          final polyline = ref.watch(widget._mapPolylineProvider!);
           return PolylineLayer(
             polylines: polyline,
           );
         }),
         Consumer(builder: (context, ref, child) {
-          final markers = ref.watch(mapMarkersProvider);
+          if (widget._mapMarkersProvider == null) {
+            return const SizedBox();
+          }
+
+          final markers = ref.watch(widget._mapMarkersProvider!);
           return MarkerLayer(
             markers: markers,
           );
         }),
         Consumer(builder: (context, ref, child) {
-          final markers = ref.watch(mapMarkersProvider);
+          if (widget._mapMarkersProvider == null) {
+            return const SizedBox();
+          }
+
+          final markers = ref.watch(widget._mapMarkersProvider!);
           return MarkerClusterLayerWidget(
             options: MarkerClusterLayerOptions(
               maxClusterRadius: 120,

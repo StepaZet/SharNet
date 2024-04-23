@@ -62,17 +62,6 @@ class SharkMapInfo {
     );
   }
 
-  // List<PointInfo> getPoints() {
-  //   List<PointInfo> points = [];
-  //   for (var track in tracksList) {
-  //     for (var point in track.skip(1)) {
-  //       points.add(point);
-  //     }
-  //   }
-  //
-  //   return points;
-  // }
-
   List<Polyline> getRoute() {
     List<Polyline> polylines = [];
     for (var track in tracksList) {
