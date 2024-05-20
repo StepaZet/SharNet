@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../models/buoy.dart';
-import '../models/shark.dart';
+import 'package:client/models/buoy.dart';
+import 'package:client/models/shark.dart';
 
 class ResetButton extends ConsumerWidget {
   final StateProvider<SharkMapInfo?> selectedSharkProvider;

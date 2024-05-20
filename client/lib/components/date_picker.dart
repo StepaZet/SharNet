@@ -52,6 +52,7 @@ class _DatePickerState extends ConsumerState<DatePicker> {
             height: baseSizeHeight * 0.5,
             width: baseSizeWidth * 0.8,
             child: SfDateRangePicker(
+                initialDisplayDate: endDate,
               onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                 if (args.value is PickerDateRange) {
                   final range = args.value;

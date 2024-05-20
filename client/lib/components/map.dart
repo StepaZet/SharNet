@@ -5,7 +5,7 @@ import 'package:flutter_map_marker_cluster/flutter_map_marker_cluster.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
-import '../models/config.dart';
+import 'package:client/models/config.dart';
 
 final mapCenterProvider =
     StateProvider<LatLng>((ref) => const LatLng(37.4219999, -122.0862462));

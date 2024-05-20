@@ -2,13 +2,21 @@ import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'dart:convert';
 
-import '../models/buoy.dart';
-import '../models/config.dart';
+import 'package:client/models/buoy.dart';
+import 'package:client/models/config.dart';
 
 Future<BuoySearchInfo> searchBuoy(String query) async {
+
+  Map<String, String> headers = {};
+
+  if (Config.accessToken != null) {
+    headers['Authorization'] = 'Bearer ${Config.accessToken}';
+    headers['Content-Type'] = 'application/json';
+  }
+
   String url = "${Config.apiUrl}/buoys/get_by_name/$query/";
 
-  var response = await http.get(Uri.parse(url));
+  var response = await http.get(Uri.parse(url), headers: headers);
 
   if (response.statusCode == 200) {
     var data = jsonDecode(response.body);

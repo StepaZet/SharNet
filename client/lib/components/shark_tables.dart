@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/shark.dart';
+import 'package:client/models/shark.dart';
 
 Color getBlueColor(Set<MaterialState> states) {
   return Colors.blue.shade50;

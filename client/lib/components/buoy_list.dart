@@ -1,7 +1,7 @@
 import 'package:client/components/buoy_card.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../models/buoy.dart';
+import 'package:client/models/buoy.dart';
 
 class BuoyList extends StatelessWidget {
   final List<BuoyMapInfo> buoys;

@@ -1,7 +1,7 @@
 import 'package:client/components/shark_card.dart';
 import 'package:flutter/cupertino.dart';
 
-import '../models/shark.dart';
+import 'package:client/models/shark.dart';
 
 class SharkList extends StatelessWidget {
   final List<SharkMapInfo> sharks;

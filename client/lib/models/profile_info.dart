@@ -1,12 +1,16 @@
 import 'dart:core';
 
+import 'package:client/models/config.dart';
+
 enum ResultEnum {
   ok,
   unauthorized,
-  emailAlreadyExist,
+  emailAlreadyExists,
   emailNotFound,
   emailNotVerified,
   wrongPassword,
+  unknownError,
+  unknownToken,
 }
 
 class PossibleErrorResult<T> {
@@ -18,12 +22,29 @@ class PossibleErrorResult<T> {
 
 class ProfileInfo {
   String name;
+  String surname;
   String email;
   String photoUrl;
+  String username;
+  DateTime? birthDate;
 
-ProfileInfo({
+  ProfileInfo({
     required this.name,
+    required this.surname,
     required this.email,
     required this.photoUrl,
+    required this.username,
+    this.birthDate,
   });
+
+  factory ProfileInfo.fromJson(Map<String, dynamic> json) {
+    return ProfileInfo(
+      name: json['name'],
+      surname: json['surname'],
+      email: json['email'],
+      photoUrl: json['photo'] ?? Config.defaultAvatarUrl,
+      username: json['username'],
+      birthDate: json['date_of_birth'] != null ? DateTime.parse(json['date_of_birth']) : null,
+    );
+  }
 }

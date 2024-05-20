@@ -4,7 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'date_picker.dart';
-import 'legent.dart';
+import 'legend.dart';
 import 'map.dart';
 
 class MapScreen extends ConsumerWidget {

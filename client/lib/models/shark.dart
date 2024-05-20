@@ -200,7 +200,7 @@ class SharkFullInfo {
       lastTagged: json["last_tagged"].substring(0, 10),
       buoysList: buoysList,
       averageLength: json["average_length"],
-      averageWeight: json["average_weight"],
+      averageWeight: json["average_weight"],  // опечатка, как Илья исправит, так и здесь исправлю
       topWeight: topWeight,
       topLength: topLength,
     );

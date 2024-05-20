@@ -10,6 +10,7 @@ class BuoyMapInfo {
   int detectedSharks;
   String lastPing; // datetime в формате ISO
   List<String> sharksList;
+  bool? isFavorite;
 
   BuoyMapInfo({
     required this.id,
@@ -20,6 +21,7 @@ class BuoyMapInfo {
     required this.detectedSharks,
     required this.lastPing,
     required this.sharksList,
+    this.isFavorite,
   });
 
   // from json
@@ -39,9 +41,11 @@ class BuoyMapInfo {
       detectedSharks: json["detected_sharks"],
       lastPing: json["last_ping"].substring(0, 10),  // Обрезать
       sharksList: sharksList,
+      isFavorite: json["is_favourite"],
     );
   }
 }
+
 
 class BuoySearchInfo {
   List<BuoyMapInfo> buoys;

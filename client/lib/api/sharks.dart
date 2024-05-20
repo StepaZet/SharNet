@@ -1,8 +1,8 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../models/config.dart';
-import '../models/shark.dart';
+import 'package:client/models/config.dart';
+import 'package:client/models/shark.dart';
 
 Future<SharkSearchInfo> searchShark(String query) async {
   String url = "${Config.apiUrl}/sharks/get_by_name/$query/";

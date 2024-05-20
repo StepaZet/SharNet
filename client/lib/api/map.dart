@@ -2,10 +2,10 @@ import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-import '../models/buoy.dart';
-import '../models/config.dart';
-import '../models/positions.dart';
-import '../models/shark.dart';
+import 'package:client/models/buoy.dart';
+import 'package:client/models/config.dart';
+import 'package:client/models/positions.dart';
+import 'package:client/models/shark.dart';
 
 Future<MapShortInfo> getMapShortInfo(
     DateTime startDate, DateTime endDate) async {
@@ -33,7 +33,14 @@ Future<BuoyMapInfo> getBuoyMapInfo(
   String url =
       "${Config.apiUrl}/buoys/by_id_and_date/$buoyId/?date_from=${start.toIso8601String()}&date_to=${end.toIso8601String()}";
 
-  var response = await http.get(Uri.parse(url));
+  Map<String, String> headers = {};
+
+  if (Config.accessToken != null) {
+    headers['Authorization'] = 'Bearer ${Config.accessToken}';
+    headers['Content-Type'] = 'application/json';
+  }
+
+  var response = await http.get(Uri.parse(url), headers: headers);
 
   if (response.statusCode == 200) {
     var data = jsonDecode(response.body);

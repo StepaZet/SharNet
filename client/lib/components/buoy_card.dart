@@ -1,17 +1,27 @@
+import 'package:client/api/profile.dart';
+import 'package:client/components/like_button.dart';
 import 'package:flutter/material.dart';
-import '../api/buoys.dart';
-import '../models/buoy.dart';
-import '../pages/details/buoy_details_page.dart';
+import 'package:client/api/buoys.dart';
+import 'package:client/models/buoy.dart';
+import 'package:client/pages/details/buoy_details.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'info_line.dart';
 
-class BuoyCard extends StatelessWidget {
+class BuoyCard extends ConsumerWidget {
   final BuoyMapInfo buoy;
+  final favoriteProvider = StateProvider<bool?>((ref) => null);
+  final loadingProvider = StateProvider<bool>((ref) => false);
 
-  const BuoyCard({super.key, required this.buoy});
+  BuoyCard({super.key, required this.buoy});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     double baseHeight = MediaQuery.of(context).size.height;
-    double baseFontSize = baseHeight * 0.025; // Например, 5% от ширины экрана
+    double baseFontSize = baseHeight * 0.025;
+
+    Future.microtask(() {
+      ref.read(favoriteProvider.notifier).state = buoy.isFavorite;
+    });
 
     return Card(
       clipBehavior: Clip.antiAlias, // Обрезка содержимого по границе карточки
@@ -25,7 +35,9 @@ class BuoyCard extends StatelessWidget {
 
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => BuoyDetails(buoyFullInfo: buoyFullInfo)),
+            MaterialPageRoute(
+              builder: (context) => BuoyDetails(buoyFullInfo: buoyFullInfo),
+            ),
           );
         },
         child: Row(
@@ -34,7 +46,8 @@ class BuoyCard extends StatelessWidget {
               flex: 2,
               child: Image.network(
                 buoy.photo,
-                fit: BoxFit.cover, // Изображение будет заполнять всю высоту карточки
+                fit: BoxFit.cover,
+                // Изображение будет заполнять всю высоту карточки
                 height: baseHeight * 0.3,
               ),
             ),
@@ -46,12 +59,41 @@ class BuoyCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Text(buoy.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: baseFontSize * 0.8)),
-                    SizedBox(height: baseFontSize * 0.1), // Расстояние между элементами
-                    InfoLine(label: 'Location', value: '${buoy.location.latitude.toStringAsFixed(2)}, ${buoy.location.longitude.toStringAsFixed(2)}', baseFontSize: baseFontSize),
-                    InfoLine(label: 'Pings', value: '${buoy.pings}', baseFontSize: baseFontSize),
-                    InfoLine(label: 'Sharks', value: '${buoy.detectedSharks}', baseFontSize: baseFontSize),
-                    InfoLine(label: 'Last ping', value: buoy.lastPing, baseFontSize: baseFontSize),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(buoy.name,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: baseFontSize * 0.8)),
+                        LikeButton(
+                          favoriteProvider: favoriteProvider,
+                          loadingProvider: loadingProvider,
+                          onFavorite: () async {
+                            return await addBuoyToFavorite(buoy.id);
+                          },
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: baseFontSize * 0.1),
+                    // Расстояние между элементами
+                    InfoLine(
+                        label: 'Location',
+                        value:
+                            '${buoy.location.latitude.toStringAsFixed(2)}, ${buoy.location.longitude.toStringAsFixed(2)}',
+                        baseFontSize: baseFontSize),
+                    InfoLine(
+                        label: 'Pings',
+                        value: '${buoy.pings}',
+                        baseFontSize: baseFontSize),
+                    InfoLine(
+                        label: 'Sharks',
+                        value: '${buoy.detectedSharks}',
+                        baseFontSize: baseFontSize),
+                    InfoLine(
+                        label: 'Last ping',
+                        value: buoy.lastPing,
+                        baseFontSize: baseFontSize),
                   ],
                 ),
               ),
@@ -59,24 +101,6 @@ class BuoyCard extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class InfoLine extends StatelessWidget {
-  final String label;
-  final String value;
-  final double baseFontSize;
-
-  const InfoLine({Key? key, required this.label, required this.value, required this.baseFontSize}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text('$label\t', style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
-        Text(value, style: TextStyle(fontFamily: 'inter', fontSize: baseFontSize * 0.7)),
-      ],
     );
   }
 }

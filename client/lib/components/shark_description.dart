@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/shark.dart';
+import 'package:client/models/shark.dart';
 import 'info_line.dart';
 
 class SharkDescription extends StatelessWidget {

@@ -9,5 +9,8 @@ class Config {
 
   static const String apiUrl = 'http://51.250.93.227:8000';
 
-  static String? accessToken;
+  static const String defaultAvatarUrl = 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg';
+
+  static String? accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE2MjI0OTQ5LCJpYXQiOjE3MTYyMjQwNDksImp0aSI6ImJmM2I0MzQ3ZWY1OTRiNGFhNTJjNjAwM2Q3NTk2ZDRhIiwidXNlcl9pZCI6MzN9.tRa-QnTMh5K0DlU7be4zGByTu1s6d0ORdxCBlP_hJrw';
+  static String? refreshToken;
 }

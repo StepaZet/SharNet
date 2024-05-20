@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../models/shark.dart';
+import 'package:client/models/shark.dart';
 
 class SharkComparisonLegend extends StatelessWidget {
   final SharkFullInfo sharkFullInfo;

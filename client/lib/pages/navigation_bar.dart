@@ -1,12 +1,12 @@
-import 'package:client/pages/main_pages/main_buoys_page.dart';
-import 'package:client/pages/main_pages/main_map_page.dart';
+import 'package:client/pages/main_pages/search_buoys.dart';
+import 'package:client/pages/main_pages/main_map.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import 'main_pages/main_more_page.dart';
-import 'main_pages/main_profile_page.dart';
-import 'main_pages/main_sharks_page.dart';
+import 'main_pages/main_more.dart';
+import 'main_pages/main_profile.dart';
+import 'main_pages/search_sharks.dart';
 
 // Provider to hold the currently selected page index
 final selectedPageProvider = StateProvider((ref) => 0);
@@ -60,11 +60,10 @@ class MyHomePage extends ConsumerWidget {
   }
 }
 
-// List of available pages
 const List<Widget> _widgetOptions = [
-  ProviderScope(child: MainMapPage()),
-  ProviderScope(child: SharksPage()),
-  ProviderScope(child: BuoysPage()),
-  ProviderScope(child: MorePage()),
-  ProviderScope(child: ProfilePage()),
+  MainMapPage(),
+  SharksPage(),
+  BuoysPage(),
+  MorePage(),
+  ProfilePage(),
 ];

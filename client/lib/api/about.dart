@@ -1,5 +1,5 @@
 // Определение класса для возвращаемого объекта
-import '../models/config.dart';
+import 'package:client/models/config.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';  // Для работы с json
 
