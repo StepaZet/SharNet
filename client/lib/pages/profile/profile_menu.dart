@@ -8,6 +8,7 @@ import 'edit_profile.dart';
 
 final nameProvider = StateProvider<String>((ref) => '');
 final surnameProvider = StateProvider<String>((ref) => '');
+final photoUrlProvider = StateProvider<String>((ref) => '');
 
 class ProfileMenu extends ConsumerWidget {
   final ProfileInfo userInfo;
@@ -22,6 +23,7 @@ class ProfileMenu extends ConsumerWidget {
     Future.microtask(() {
       ref.read(nameProvider.notifier).state = userInfo.name ?? '';
       ref.read(surnameProvider.notifier).state = userInfo.surname ?? '';
+      ref.read(photoUrlProvider.notifier).state = userInfo.photoUrl ?? '';
     });
 
     return ListView(
@@ -32,12 +34,20 @@ class ProfileMenu extends ConsumerWidget {
             children: [
               Expanded(
                 flex: 2,
-                child: Image.network(
-                  userInfo.photoUrl,
-                  fit: BoxFit.scaleDown,
-                  // Изображение будет заполнять всю высоту карточки
-                  height: baseSizeHeight * 0.2,
-                ),
+                child: Consumer(builder: (context, ref, child) {
+                  final photoUrl = ref.watch(photoUrlProvider);
+
+                  if (photoUrl.isEmpty) {
+                    return const CircularProgressIndicator();
+                  }
+
+                  return Image.network(
+                    photoUrl,
+                    fit: BoxFit.scaleDown,
+                    // Изображение будет заполнять всю высоту карточки
+                    height: baseSizeHeight * 0.2,
+                  );
+                }),
               ),
               Expanded(
                 flex: 3,

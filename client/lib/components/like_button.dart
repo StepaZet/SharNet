@@ -34,10 +34,8 @@ class LikeButton extends ConsumerWidget {
       children: [
         IconButton(
           icon: icon,
-          onPressed: () async {
-            if (isFavorite == null) {
-              return;
-            }
+          onPressed: isFavorite == null ? null : () async {
+            
             ref.read(loadingProvider.notifier).state = true;
             var result = await onFavorite();
 

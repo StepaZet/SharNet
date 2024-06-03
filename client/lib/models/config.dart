@@ -11,6 +11,6 @@ class Config {
 
   static const String defaultAvatarUrl = 'https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg';
 
-  static String? accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE2MjI0OTQ5LCJpYXQiOjE3MTYyMjQwNDksImp0aSI6ImJmM2I0MzQ3ZWY1OTRiNGFhNTJjNjAwM2Q3NTk2ZDRhIiwidXNlcl9pZCI6MzN9.tRa-QnTMh5K0DlU7be4zGByTu1s6d0ORdxCBlP_hJrw';
+  static String? accessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzE2OTAwMTEyLCJpYXQiOjE3MTY4MTM3MTIsImp0aSI6IjQxNDYxNzFlOWY3YjQ4MTg5YTU3M2Q3Njc0Mjg2NTdmIiwidXNlcl9pZCI6MzN9.VScMsYMaOyjtdc7tSu108uvbrZyEhQ0n7SFFVAohWGI';
   static String? refreshToken;
 }

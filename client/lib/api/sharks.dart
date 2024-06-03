@@ -7,7 +7,14 @@ import 'package:client/models/shark.dart';
 Future<SharkSearchInfo> searchShark(String query) async {
   String url = "${Config.apiUrl}/sharks/get_by_name/$query/";
 
-  var response = await http.get(Uri.parse(url));
+  Map<String, String> headers = {};
+
+  if (Config.accessToken != null) {
+    headers['Authorization'] = 'Bearer ${Config.accessToken}';
+    headers['Content-Type'] = 'application/json';
+  }
+
+  var response = await http.get(Uri.parse(url), headers: headers);
 
   if (response.statusCode == 200) {
     var data = jsonDecode(response.body);

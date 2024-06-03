@@ -42,7 +42,7 @@ class ProfileInfo {
       name: json['name'],
       surname: json['surname'],
       email: json['email'],
-      photoUrl: json['photo'] ?? Config.defaultAvatarUrl,
+      photoUrl: json['avatar'] ?? Config.defaultAvatarUrl,
       username: json['username'],
       birthDate: json['date_of_birth'] != null ? DateTime.parse(json['date_of_birth']) : null,
     );

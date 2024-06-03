@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "588291779329",
+    "project_id": "sharsnet",
+    "storage_bucket": "sharsnet.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:588291779329:android:084748b0381341d1758900",
+        "android_client_info": {
+          "package_name": "sharknet.client"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "133400927738-1e5o1n23uqdeemma97sv6dr0p4109ttc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWPesf-MshBsiBbZGY3jRmpOz0sP9zR68"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "133400927738-1e5o1n23uqdeemma97sv6dr0p4109ttc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "133400927738-1e5o1n23uqdeemma97sv6dr0p4109ttc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.client"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

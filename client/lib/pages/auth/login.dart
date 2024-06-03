@@ -1,3 +1,4 @@
+import 'package:client/api/firebase.dart';
 import 'package:client/pages/auth/forget_password.dart';
 import 'package:flutter/material.dart';
 
@@ -106,7 +107,7 @@ class LoginPage extends ConsumerWidget {
             const Divider(),
             TextButton(
               onPressed: () {
-                // TODO: Add Sign up with Google functionality
+
               },
               child: const Text('Sign up with Google'),
             ),

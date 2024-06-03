@@ -1,19 +1,29 @@
+import 'package:client/api/profile.dart';
+import 'package:client/components/like_button.dart';
+import 'package:client/models/profile_info.dart';
 import 'package:flutter/material.dart';
 
 import 'package:client/api/sharks.dart';
 import 'package:client/models/shark.dart';
 import 'package:client/pages/details/shark_details.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'info_line.dart';
 
-class SharkCard extends StatelessWidget {
+class SharkCard extends ConsumerWidget {
   final SharkMapInfo shark;
+  final favoriteProvider = StateProvider<bool?>((ref) => null);
+  final loadingProvider = StateProvider<bool>((ref) => false);
 
-  const SharkCard({super.key, required this.shark});
+  SharkCard({super.key, required this.shark});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     double baseHeight = MediaQuery.of(context).size.height;
     double baseFontSize = baseHeight * 0.025; // Например, 5% от ширины экрана
+
+    Future.microtask(() {
+      ref.read(favoriteProvider.notifier).state = shark.isFavourite;
+    });
 
     return Card(
       clipBehavior: Clip.antiAlias, // Обрезка содержимого по границе карточки
@@ -49,10 +59,27 @@ class SharkCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Text(shark.name,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: baseFontSize * 0.8)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(shark.name,
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: baseFontSize * 0.8)),
+                        LikeButton(
+                          favoriteProvider: favoriteProvider,
+                          loadingProvider: loadingProvider,
+                          onFavorite: () async {
+                            var result = await changeSharkFavoriteValue(shark.id, shark.isFavourite!);
+                            if (result.resultStatus == ResultEnum.ok) {
+                              shark.isFavourite = !shark.isFavourite!;
+                            }
+
+                            return result;
+                          },
+                        ),
+                      ],
+                    ),
                     SizedBox(height: baseFontSize * 0.1),
                     // Расстояние между элементами
                     InfoLine(

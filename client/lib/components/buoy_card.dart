@@ -1,5 +1,6 @@
 import 'package:client/api/profile.dart';
 import 'package:client/components/like_button.dart';
+import 'package:client/models/profile_info.dart';
 import 'package:flutter/material.dart';
 import 'package:client/api/buoys.dart';
 import 'package:client/models/buoy.dart';
@@ -20,7 +21,7 @@ class BuoyCard extends ConsumerWidget {
     double baseFontSize = baseHeight * 0.025;
 
     Future.microtask(() {
-      ref.read(favoriteProvider.notifier).state = buoy.isFavorite;
+      ref.read(favoriteProvider.notifier).state = buoy.isFavourite;
     });
 
     return Card(
@@ -70,7 +71,12 @@ class BuoyCard extends ConsumerWidget {
                           favoriteProvider: favoriteProvider,
                           loadingProvider: loadingProvider,
                           onFavorite: () async {
-                            return await addBuoyToFavorite(buoy.id);
+                            var result = await changeBuoyFavoriteValue(buoy.id, buoy.isFavourite!);
+                            if (result.resultStatus == ResultEnum.ok) {
+                              buoy.isFavourite = !buoy.isFavourite!;
+                            }
+
+                            return result;
                           },
                         ),
                       ],

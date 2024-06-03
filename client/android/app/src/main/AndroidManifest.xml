@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application
         android:label="client"
         android:name="${applicationName}"
@@ -29,6 +31,9 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        <!-- Add this line -->
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="1:588291779329:android:084748b0381341d1758900"/>
     </application>
-    <uses-permission android:name="android.permission.INTERNET"/> <!-- Add this -->
 </manifest>

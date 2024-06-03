@@ -6,16 +6,12 @@ import 'package:client/api/sharks.dart';
 import 'package:client/components/shark_card.dart';
 import 'package:client/models/shark.dart';
 
-final sharkSearchInfoProvider =
-FutureProvider<SharkSearchInfo>((ref) => searchShark(''));
 
-class SharksPage extends ConsumerWidget {
+class SharksPage extends StatelessWidget {
   const SharksPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<SharkSearchInfo> sharkSearchInfo =
-    ref.watch(sharkSearchInfoProvider);
+  Widget build(BuildContext context) {
 
     return Scaffold(
       appBar: AppBar(
@@ -34,27 +30,43 @@ class SharksPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: sharkSearchInfo.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(child: Text('Error: $error')),
-        data: (data) {
-          if (data.sharks.isEmpty) {
-            return const Center(child: Text('No sharks found'));
+      body: FutureBuilder<SharkSearchInfo>(
+        future: searchShark(''),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
           }
-          return ListView.builder(
-            itemCount: data.sharks.length,
-            itemBuilder: (context, index) {
-              double baseHeight = MediaQuery.of(context).size.height;
-
-              return SizedBox(
-                height: baseHeight * 0.2,
-                child: SharkCard(shark: data.sharks[index]),
-              );
-            },
-          );
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData || snapshot.data!.sharks.isEmpty) {
+            return const Center(child: Text('No buoys found'));
+          }
+          return SharkList(sharks: snapshot.data!.sharks);
         },
       ),
     );
+    //   body: sharkSearchInfo.when(
+    //     loading: () => const Center(child: CircularProgressIndicator()),
+    //     error: (error, stackTrace) => Center(child: Text('Error: $error')),
+    //     data: (data) {
+    //       if (data.sharks.isEmpty) {
+    //         return const Center(child: Text('No sharks found'));
+    //       }
+    //       return ListView.builder(
+    //         itemCount: data.sharks.length,
+    //         itemBuilder: (context, index) {
+    //           double baseHeight = MediaQuery.of(context).size.height;
+    //
+    //           return SizedBox(
+    //             height: baseHeight * 0.2,
+    //             child: SharkCard(shark: data.sharks[index]),
+    //           );
+    //         },
+    //       );
+    //     },
+    //   ),
+    // );
   }
 }
 

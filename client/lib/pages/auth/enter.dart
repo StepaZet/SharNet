@@ -1,4 +1,7 @@
+import 'package:client/api/firebase.dart';
+import 'package:client/models/config.dart';
 import 'package:client/pages/auth/register.dart';
+import 'package:client/pages/navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'package:client/api/profile.dart';
@@ -94,7 +97,25 @@ class EnterPage extends ConsumerWidget {
             ),
             const Divider(height: 32),
             TextButton(
-              onPressed: () {},
+              onPressed: () async {
+                var loginResult = await signInWithGoogle();
+
+                if (loginResult.resultStatus != ResultEnum.ok) {
+                  return;
+                }
+
+                Config.accessToken = loginResult.resultData!["access"];
+                Config.refreshToken = loginResult.resultData!["refresh"];
+
+                Navigator.popUntil(context, (route) => route.isFirst);
+                Navigator.pushReplacement(
+                  context,
+                  PageRouteBuilder(
+                    transitionDuration: Duration.zero,
+                    pageBuilder: (_, __, ___) => const MyHomePage(),
+                  ),
+                );
+              },
               child: const Text('Sign up with Google'),
             ),
             TextButton(

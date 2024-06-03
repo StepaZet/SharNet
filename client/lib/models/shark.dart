@@ -14,6 +14,7 @@ class SharkMapInfo {
   int tracks;
   String lastTagged; // datetime в формате ISO
   List<List<PointInfo>> tracksList;
+  bool? isFavourite;
 
   SharkMapInfo({
     required this.id,
@@ -25,6 +26,7 @@ class SharkMapInfo {
     required this.tracks,
     required this.lastTagged,
     required this.tracksList,
+    this.isFavourite,
   });
 
   // from json
@@ -57,8 +59,8 @@ class SharkMapInfo {
       tracks: json["tracks"],
       sex: sex,
       lastTagged: json["last_tagged"].substring(0, 10),
-      // Обрезать
       tracksList: tracksList,
+      isFavourite: json["is_favourite"],
     );
   }
 

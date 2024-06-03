@@ -25,7 +25,7 @@ Future<PossibleErrorResult<ProfileInfo>> getUserInfo() async {
         resultData: null, resultStatus: ResultEnum.unauthorized);
   }
 
-  var data = jsonDecode(response.body);
+  var data = jsonDecode(utf8.decode(response.bodyBytes));
 
   var result = ProfileInfo.fromJson(data);
 
@@ -128,6 +128,36 @@ Future<PossibleErrorResult<Map<String, String>>> loginUser(
   var body = jsonEncode({
     "username": email,
     "password": password,
+  });
+
+  var response = await http.post(
+    Uri.parse(url),
+    headers: {"Content-Type": "application/json"},
+    body: body,
+  );
+
+  if (response.statusCode == 401 || response.statusCode == 400) {
+    return PossibleErrorResult(
+        resultData: null, resultStatus: ResultEnum.wrongPassword);
+  }
+
+  var responseData = jsonDecode(response.body);
+  var tokens = {
+    "access": responseData["access"]?.toString() ?? "",
+    "refresh": responseData["refresh"]?.toString() ?? "",
+  };
+
+  print(tokens["access"]);
+
+  return PossibleErrorResult(resultData: tokens, resultStatus: ResultEnum.ok);
+}
+
+Future<PossibleErrorResult<Map<String, String>>> loginGoogleUser(
+    String idToken) async {
+  var url = "${Config.apiUrl}/auth/firebase-login/";
+
+  var body = jsonEncode({
+    "idToken": idToken,
   });
 
   var response = await http.post(
@@ -255,13 +285,13 @@ Future<PossibleErrorResult<BuoySearchInfo>> getFavoriteBuoys() async {
       resultData: BuoySearchInfo.fromJson(data), resultStatus: ResultEnum.ok);
 }
 
-Future<PossibleErrorResult> addBuoyToFavorite(String buoyId) {
+Future<PossibleErrorResult> _addBuoyToFavorite(String buoyId) {
   if (Config.accessToken == null) {
     return Future.value(PossibleErrorResult(
         resultData: null, resultStatus: ResultEnum.unauthorized));
   }
 
-  var url = "${Config.apiUrl}/buoys/add_to_favourite/${buoyId}/";
+  var url = "${Config.apiUrl}/buoys/add_to_favourite/$buoyId/";
 
   var headers = {
     "Authorization": "Bearer ${Config.accessToken}",
@@ -269,6 +299,166 @@ Future<PossibleErrorResult> addBuoyToFavorite(String buoyId) {
   };
 
   return http.put(Uri.parse(url), headers: headers).then((response) {
+    if (response.statusCode == 401) {
+      return PossibleErrorResult(
+          resultData: null, resultStatus: ResultEnum.unauthorized);
+    }
+
+    if (response.statusCode != 204) {
+      return PossibleErrorResult(
+          resultData: null, resultStatus: ResultEnum.unknownError);
+    }
+
+    return PossibleErrorResult(resultData: null, resultStatus: ResultEnum.ok);
+  });
+}
+
+Future<PossibleErrorResult> _removeBuoyFromFavorite(String buoyId) {
+  if (Config.accessToken == null) {
+    return Future.value(PossibleErrorResult(
+        resultData: null, resultStatus: ResultEnum.unauthorized));
+  }
+
+  var url = "${Config.apiUrl}/buoys/remove_from_favourite/$buoyId/";
+
+  var headers = {
+    "Authorization": "Bearer ${Config.accessToken}",
+    "Content-Type": "application/json",
+  };
+
+  return http.delete(Uri.parse(url), headers: headers).then((response) {
+    if (response.statusCode == 401) {
+      return PossibleErrorResult(
+          resultData: null, resultStatus: ResultEnum.unauthorized);
+    }
+
+    if (response.statusCode != 204) {
+      return PossibleErrorResult(
+          resultData: null, resultStatus: ResultEnum.unknownError);
+    }
+
+    return PossibleErrorResult(resultData: null, resultStatus: ResultEnum.ok);
+  });
+}
+
+Future<PossibleErrorResult> changeBuoyFavoriteValue(String buoyId, bool lastValue) {
+  if (lastValue) {
+    return _removeBuoyFromFavorite(buoyId);
+  }
+
+  return _addBuoyToFavorite(buoyId);
+}
+
+Future<PossibleErrorResult> _addSharkToFavoriteValue(String sharkId) {
+  if (Config.accessToken == null) {
+    return Future.value(PossibleErrorResult(
+        resultData: null, resultStatus: ResultEnum.unauthorized));
+  }
+
+  var url = "${Config.apiUrl}/sharks/add_to_favourite/$sharkId/";
+
+  var headers = {
+    "Authorization": "Bearer ${Config.accessToken}",
+    "Content-Type": "application/json",
+  };
+
+  return http.put(Uri.parse(url), headers: headers).then((response) {
+    if (response.statusCode == 401) {
+      return PossibleErrorResult(
+          resultData: null, resultStatus: ResultEnum.unauthorized);
+    }
+
+    if (response.statusCode != 204) {
+      return PossibleErrorResult(
+          resultData: null, resultStatus: ResultEnum.unknownError);
+    }
+
+    return PossibleErrorResult(resultData: null, resultStatus: ResultEnum.ok);
+  });
+}
+
+Future<PossibleErrorResult> _removeSharkFromFavorite(String sharkId) {
+  if (Config.accessToken == null) {
+    return Future.value(PossibleErrorResult(
+        resultData: null, resultStatus: ResultEnum.unauthorized));
+  }
+
+  var url = "${Config.apiUrl}/sharks/remove_from_favourite/$sharkId/";
+
+  var headers = {
+    "Authorization": "Bearer ${Config.accessToken}",
+    "Content-Type": "application/json",
+  };
+
+  return http.delete(Uri.parse(url), headers: headers).then((response) {
+    if (response.statusCode == 401) {
+      return PossibleErrorResult(
+          resultData: null, resultStatus: ResultEnum.unauthorized);
+    }
+
+    if (response.statusCode != 204) {
+      return PossibleErrorResult(
+          resultData: null, resultStatus: ResultEnum.unknownError);
+    }
+
+    return PossibleErrorResult(resultData: null, resultStatus: ResultEnum.ok);
+  });
+}
+
+Future<PossibleErrorResult> changeSharkFavoriteValue(String sharkId, bool lastValue) {
+  if (lastValue) {
+    return _removeSharkFromFavorite(sharkId);
+  }
+
+  return _addSharkToFavoriteValue(sharkId);
+}
+
+Future<PossibleErrorResult> deletePhoto() {
+  if (Config.accessToken == null) {
+    return Future.value(PossibleErrorResult(
+        resultData: null, resultStatus: ResultEnum.unauthorized));
+  }
+
+  var url = "${Config.apiUrl}/users/delete_photo/";
+
+  var headers = {
+    "Authorization": "Bearer ${Config.accessToken}",
+    "Content-Type": "application/json",
+  };
+
+  return http.delete(Uri.parse(url), headers: headers).then((response) {
+    if (response.statusCode == 401) {
+      return PossibleErrorResult(
+          resultData: null, resultStatus: ResultEnum.unauthorized);
+    }
+
+    if (response.statusCode != 200) {
+      return PossibleErrorResult(
+          resultData: null, resultStatus: ResultEnum.unknownError);
+    }
+
+    return PossibleErrorResult(resultData: null, resultStatus: ResultEnum.ok);
+  });
+}
+
+Future<PossibleErrorResult> updatePhoto(String photo) {
+  if (Config.accessToken == null) {
+    return Future.value(PossibleErrorResult(
+        resultData: null, resultStatus: ResultEnum.unauthorized));
+  }
+
+  var url = "${Config.apiUrl}/users/add_photo/";
+
+  var headers = {
+    "Authorization": "Bearer ${Config.accessToken}",
+    "Content-Type": "application/json",
+  };
+
+  var body = jsonEncode({
+    "photo": photo,
+  });
+
+  return http.post(Uri.parse(url), headers: headers, body: body).then((response) {
     if (response.statusCode == 401) {
       return PossibleErrorResult(
           resultData: null, resultStatus: ResultEnum.unauthorized);
