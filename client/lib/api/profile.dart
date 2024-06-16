@@ -82,9 +82,8 @@ Future<PossibleErrorResult> checkMailExist(String email) async {
 }
 
 Future<PossibleErrorResult> registerUser(
-    String name, String username, String email, String password) async {
+    String username, String email, String password) async {
   var body = jsonEncode({
-    "name": name,
     "username": username,
     "email": email,
     "password1": password,

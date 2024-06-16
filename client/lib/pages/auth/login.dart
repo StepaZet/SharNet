@@ -1,4 +1,5 @@
 import 'package:client/api/firebase.dart';
+import 'package:client/components/styles.dart';
 import 'package:client/pages/auth/forget_password.dart';
 import 'package:flutter/material.dart';
 
@@ -40,12 +41,12 @@ class LoginPage extends ConsumerWidget {
               return Form(
                 key: formKey,
                 child: TextFormField(
+                  style: formTextStyle,
                   controller: controller,
                   obscureText: obscureText,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    border: const OutlineInputBorder(),
-                    suffixIcon: IconButton(
+                  decoration: formFieldStyleWithLabel(
+                    'Password',
+                    iconButton: IconButton(
                       icon: Icon(obscureText ? Icons.visibility_off : Icons.visibility),
                       onPressed: () {
                         ref.read(obscureTextProvider.notifier).state = !obscureText;
@@ -73,57 +74,89 @@ class LoginPage extends ConsumerWidget {
                     ),
                   );
                 },
-                child: const Text('Forgot password?'),
+                child: const Text('Forgot password?', style: TextStyle(color: Colors.blue, fontSize: 16)),
               ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                if (!formKey.currentState!.validate()) {
-                  return;
-                }
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: accentButtonStyle,
+                onPressed: () async {
+                  if (!formKey.currentState!.validate()) {
+                    return;
+                  }
 
-                var loginResult = await loginUser(email, controller.text);
+                  var loginResult = await loginUser(email, controller.text);
 
-                if (loginResult.resultStatus == ResultEnum.wrongPassword) {
-                  ref.read(passwordErrorProvider.notifier).state = 'Incorrect password';
-                  return;
-                }
+                  if (loginResult.resultStatus == ResultEnum.wrongPassword) {
+                    ref.read(passwordErrorProvider.notifier).state = 'Incorrect password';
+                    return;
+                  }
 
-                Config.accessToken = loginResult.resultData!["access"];
-                Config.refreshToken = loginResult.resultData!["refresh"];
+                  Config.accessToken = loginResult.resultData!["access"];
+                  Config.refreshToken = loginResult.resultData!["refresh"];
 
-                Navigator.popUntil(context, (route) => route.isFirst);
-                Navigator.pushReplacement(
-                  context,
-                  PageRouteBuilder(
-                    transitionDuration: Duration.zero,
-                    pageBuilder: (_, __, ___) => const MyHomePage(),
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: Duration.zero,
+                      pageBuilder: (_, __, ___) => const MyHomePage(),
+                    ),
+                  );
+                },
+                child: const Text('Continue'),
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Row(
+              children: <Widget>[
+                Expanded(
+                  child: Divider(
+                    color: Colors.blue,
+                    thickness: 2,
                   ),
-                );
-              },
-              child: const Text('Continue'),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text('or', style: TextStyle(color: Colors.blue, fontSize: 16, fontWeight: FontWeight.w500)),
+                ),
+                Expanded(
+                  child: Divider(
+                    color: Colors.blue,
+                    thickness: 2,
+                  ),
+                ),
+              ],
             ),
-            const Divider(),
-            TextButton(
-              onPressed: () {
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: buttonStyle,
+                onPressed: () async {
+                  var loginResult = await signInWithGoogle();
 
-              },
-              child: const Text('Sign up with Google'),
-            ),
-            TextButton(
-              onPressed: () {
-                // TODO: Add Sign up with Apple functionality
-              },
-              child: const Text('Sign up with Apple'),
+                  if (loginResult.resultStatus != ResultEnum.ok) {
+                    return;
+                  }
+
+                  Config.accessToken = loginResult.resultData!["access"];
+                  Config.refreshToken = loginResult.resultData!["refresh"];
+
+                  Navigator.popUntil(context, (route) => route.isFirst);
+                  Navigator.pushReplacement(
+                    context,
+                    PageRouteBuilder(
+                      transitionDuration: Duration.zero,
+                      pageBuilder: (_, __, ___) => const MyHomePage(),
+                    ),
+                  );
+                },
+                child: const Text('Sign up with Google'),
+              ),
             ),
             const Spacer(),
-            // TextButton(
-            //   onPressed: () {
-            //     // TODO: Navigate to sign up page
-            //   },
-            //   child: const Text("Don't have an account? Sign up"),
-            // ),
           ],
         ),
       ),

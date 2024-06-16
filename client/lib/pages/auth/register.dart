@@ -1,3 +1,4 @@
+import 'package:client/components/styles.dart';
 import 'package:client/pages/auth/registration_success.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +11,6 @@ final obscureConfirmPasswordProvider = StateProvider<bool>((ref) => true);
 
 class RegisterPage extends ConsumerWidget {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -41,22 +41,9 @@ class RegisterPage extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Name',
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your name';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
+                  style: formTextStyle,
                   controller: _usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                  ),
+                  decoration: formFieldStyleWithLabel('Username'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your username';
@@ -64,11 +51,11 @@ class RegisterPage extends ConsumerWidget {
                     return null;
                   },
                 ),
+                const SizedBox(height: 12),
                 TextFormField(
+                  style: formTextStyle,
                   controller: _emailController,
-                  decoration: const InputDecoration(
-                    labelText: 'Email',
-                  ),
+                  decoration: formFieldStyleWithLabel('Email'),
                   validator: (value) {
                     if (value == null ||
                         value.isEmpty ||
@@ -78,16 +65,21 @@ class RegisterPage extends ConsumerWidget {
                     return null;
                   },
                 ),
+                const SizedBox(height: 12),
                 Consumer(builder: (context, ref, child) {
                   final obscurePassword = ref.watch(obscurePasswordProvider);
                   return TextFormField(
+                    style: formTextStyle,
                     controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Password',
-                      suffixIcon: IconButton(
-                        icon: Icon(obscurePassword ? Icons.visibility_off : Icons.visibility),
+                    decoration: formFieldStyleWithLabel(
+                      'Password',
+                      iconButton: IconButton(
+                        icon: Icon(obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility),
                         onPressed: () {
-                          ref.read(obscurePasswordProvider.notifier).state = !obscurePassword;
+                          ref.read(obscurePasswordProvider.notifier).state =
+                              !obscurePassword;
                         },
                       ),
                     ),
@@ -100,16 +92,23 @@ class RegisterPage extends ConsumerWidget {
                     },
                   );
                 }),
+                const SizedBox(height: 12),
                 Consumer(builder: (context, ref, child) {
-                  final obscureConfirmPassword = ref.watch(obscureConfirmPasswordProvider);
+                  final obscureConfirmPassword =
+                      ref.watch(obscureConfirmPasswordProvider);
                   return TextFormField(
+                    style: formTextStyle,
                     controller: _confirmPasswordController,
-                    decoration: InputDecoration(
-                      labelText: 'Repeat the password',
-                      suffixIcon: IconButton(
-                        icon: Icon(obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
+                    decoration: formFieldStyleWithLabel(
+                      'Repeat the password',
+                      iconButton: IconButton(
+                        icon: Icon(obscureConfirmPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility),
                         onPressed: () {
-                          ref.read(obscureConfirmPasswordProvider.notifier).state = !obscureConfirmPassword;
+                          ref
+                              .read(obscureConfirmPasswordProvider.notifier)
+                              .state = !obscureConfirmPassword;
                         },
                       ),
                     ),
@@ -123,52 +122,48 @@ class RegisterPage extends ConsumerWidget {
                   );
                 }),
                 const SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () async {
-                    if (!_formKey.currentState!.validate()) {
-                      return;
-                    }
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: accentButtonStyle,
+                    onPressed: () async {
+                      if (!_formKey.currentState!.validate()) {
+                        return;
+                      }
 
-                    var registerResult = await registerUser(
-                      _nameController.text,
-                      _usernameController.text,
-                      _emailController.text,
-                      _passwordController.text,
-                    );
+                      var registerResult = await registerUser(
+                        _usernameController.text,
+                        _emailController.text,
+                        _passwordController.text,
+                      );
 
-                    if (registerResult.resultStatus == ResultEnum.unknownError) {
-                      var messages = registerResult.resultData;
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(messages.join('\n')),
-                      ));
-                      return;
-                    }
+                      if (registerResult.resultStatus ==
+                          ResultEnum.unknownError) {
+                        var messages = registerResult.resultData;
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(messages.join('\n')),
+                        ));
+                        return;
+                      }
 
-                    if (registerResult.resultStatus ==
-                        ResultEnum.emailAlreadyExists) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('This email is already registered'),
-                      ));
-                      return;
-                    }
+                      if (registerResult.resultStatus ==
+                          ResultEnum.emailAlreadyExists) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('This email is already registered'),
+                        ));
+                        return;
+                      }
 
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => RegisterSuccessPage(
-                              email: _emailController.text)),
-                    );
-                  },
-                  child: const Text('Continue'),
-                ),
-                const SizedBox(height: 24),
-                const Text(
-                  'By creating an account, you agree with Privacy Policy',
-                  textAlign: TextAlign.center,
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: const Text('Already have an account? Log in'),
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => RegisterSuccessPage(
+                                email: _emailController.text)),
+                      );
+                    },
+                    child: const Text('Continue'),
+                  ),
                 ),
               ],
             ),

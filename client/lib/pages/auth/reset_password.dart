@@ -1,3 +1,4 @@
+import 'package:client/components/styles.dart';
 import 'package:client/models/profile_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:client/api/profile.dart';
 
 final passwordErrorProvider = StateProvider<String>((ref) => '');
-final obscureTextProvider = StateProvider<bool>((ref) => true);
+final obscurePasswordProvider = StateProvider<bool>((ref) => true);
 
 final tokenErrorProvider = StateProvider<String>((ref) => '');
 
@@ -35,9 +36,10 @@ class ResetPasswordPage extends ConsumerWidget {
                 final tokenError = ref.watch(tokenErrorProvider);
 
                 return TextFormField(
+                  style: formTextStyle,
                   controller: tokenController,
-                  decoration: InputDecoration(
-                    labelText: 'Token',
+                  decoration: formFieldStyleWithLabel(
+                    'Token',
                     errorText: tokenError.isNotEmpty ? tokenError : null,
                   ),
                   validator: (value) {
@@ -51,13 +53,20 @@ class ResetPasswordPage extends ConsumerWidget {
               const SizedBox(height: 16),
               Consumer(builder: (context, ref, child) {
                 final passwordError = ref.watch(passwordErrorProvider);
-                final obscureText = ref.watch(obscureTextProvider);
+                final obscurePassword = ref.watch(obscurePasswordProvider);
 
                 return TextFormField(
+                  style: formTextStyle,
                   controller: passwordController,
-                  obscureText: obscureText,
-                  decoration: InputDecoration(
-                    labelText: 'New password',
+                  obscureText: obscurePassword,
+                  decoration: formFieldStyleWithLabel(
+                    'New password',
+                    iconButton: IconButton(
+                      icon: Icon(obscurePassword ? Icons.visibility_off : Icons.visibility),
+                      onPressed: () {
+                        ref.read(obscurePasswordProvider.notifier).state = !obscurePassword;
+                      },
+                    ),
                     errorText: passwordError.isNotEmpty ? passwordError : null,
                   ),
                   validator: (value) {
@@ -69,46 +78,53 @@ class ResetPasswordPage extends ConsumerWidget {
                 );
               }),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  if (formKey.currentState!.validate()) {
-                    var response = await resetPassword(
-                      passwordController.text,
-                      tokenController.text,
-                    );
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: accentButtonStyle,
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      var response = await resetPassword(
+                        passwordController.text,
+                        tokenController.text,
+                      );
 
-                    if (response.resultStatus == ResultEnum.unknownToken) {
-                      ref.read(tokenErrorProvider.notifier).state =
-                          'Unknown code';
-                      return;
-                    } else {
-                      ref.read(tokenErrorProvider.notifier).state = '';
+                      if (response.resultStatus == ResultEnum.unknownToken) {
+                        ref.read(tokenErrorProvider.notifier).state = 'Unknown code';
+                        return;
+                      } else {
+                        ref.read(tokenErrorProvider.notifier).state = '';
+                      }
+
+                      if (response.resultStatus == ResultEnum.wrongPassword) {
+                        var messages = response.resultData;
+
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text(messages.join('\n')),
+                        ));
+                        return;
+                      }
+
+                      ref.read(showReturnButtonProvider.notifier).state = true;
                     }
-
-                    if (response.resultStatus == ResultEnum.wrongPassword) {
-                      var messages = response.resultData;
-
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(messages.join('\n')),
-                      ));
-                      return;
-                    }
-
-                    ref.read(showReturnButtonProvider.notifier).state = true;
-                  }
-                },
-                child: const Text('Reset password'),
+                  },
+                  child: const Text('Reset password'),
+                ),
               ),
               const SizedBox(height: 16),
               Consumer(builder: (context, ref, child) {
                 final showReturnButton = ref.watch(showReturnButtonProvider);
 
                 if (showReturnButton) {
-                  return ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Return'),
+                  return SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: accentButtonStyle,
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text('Return'),
+                    ),
                   );
                 }
 

@@ -1,5 +1,5 @@
 import 'package:client/api/profile.dart';
-import 'package:client/models/profile_info.dart';
+import 'package:client/components/styles.dart';
 import 'package:client/pages/auth/reset_password.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,51 +32,50 @@ class ForgetPasswordPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Consumer(builder: (context, ref, child) {
-                final passwordError = ref.watch(emailErrorProvider);
-
                 return TextFormField(
+                  style: formTextStyle,
                   controller: emailController,
-                  decoration: InputDecoration(
-                    labelText: 'Email',
-                    errorText: passwordError.isNotEmpty ? passwordError : null,
-                  ),
+                  decoration: formFieldStyleWithLabel('Email'),
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your email';
+                    if (value == null ||
+                        value.isEmpty ||
+                        !isEmailValid(value)) {
+                      return 'Please enter a valid email';
                     }
                     return null;
                   },
                 );
               }),
               const SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () async {
-                  if (formKey.currentState!.validate()) {
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: accentButtonStyle,
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
 
-                    if (!isEmailValid(emailController.text)) {
-                      ref.read(emailErrorProvider.notifier).state =
-                      'Please enter a valid email address.';
-                      return;
+                      if (!isEmailValid(emailController.text)) {
+                        ref.read(emailErrorProvider.notifier).state =
+                        'Please enter a valid email address.';
+                        return;
+                      }
+
+                      Future.microtask(() async => {
+                        await sendPasswordResetEmail(emailController.text)
+                      });
+
+                      ref.read(emailErrorProvider.notifier).state = '';
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ResetPasswordPage(),
+                        ),
+                      );
                     }
-
-                    var response = await sendPasswordResetEmail(emailController.text);
-
-                    if (response.resultStatus == ResultEnum.emailNotFound) {
-                      ref.read(emailErrorProvider.notifier).state = 'Email not found';
-                      return;
-                    }
-
-                    ref.read(emailErrorProvider.notifier).state = '';
-
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ResetPasswordPage(),
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Send email'),
+                  },
+                  child: const Text('Send code to email'),
+                ),
               ),
             ],
           ),
