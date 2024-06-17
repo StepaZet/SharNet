@@ -1,8 +1,5 @@
-import 'dart:convert';
-
 import 'package:client/firebase_options.dart';
 import 'package:client/pages/navigation_bar.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:firebase_core/firebase_core.dart';
