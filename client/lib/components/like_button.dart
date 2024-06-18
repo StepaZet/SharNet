@@ -1,4 +1,5 @@
 import 'package:client/models/profile_info.dart';
+import 'package:client/pages/navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -38,6 +39,17 @@ class LikeButton extends ConsumerWidget {
             
             ref.read(loadingProvider.notifier).state = true;
             var result = await onFavorite();
+
+            if (result.resultStatus == ResultEnum.unauthorized) {
+              Navigator.popUntil(context, (route) => route.isFirst);
+              Navigator.pushReplacement(
+                context,
+                PageRouteBuilder(
+                  transitionDuration: Duration.zero,
+                  pageBuilder: (_, __, ___) => const MyHomePage(),
+                ),
+              );
+            }
 
             if (result.resultStatus != ResultEnum.ok) {
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

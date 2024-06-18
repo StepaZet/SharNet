@@ -21,6 +21,7 @@ Future<PossibleErrorResult<ProfileInfo>> getUserInfo() async {
   var response = await http.get(Uri.parse(url), headers: headers);
 
   if (response.statusCode == 401) {
+    Config.accessToken = null;
     return PossibleErrorResult(
         resultData: null, resultStatus: ResultEnum.unauthorized);
   }
@@ -52,6 +53,12 @@ Future<PossibleErrorResult> updateUserInfo(
   });
 
   var response = await http.put(Uri.parse(url), headers: headers, body: body);
+
+  if (response.statusCode == 401) {
+    Config.accessToken = null;
+    return PossibleErrorResult(
+        resultData: null, resultStatus: ResultEnum.unauthorized);
+  }
 
   if (response.statusCode != 204) {
     return PossibleErrorResult(
@@ -248,6 +255,7 @@ Future<PossibleErrorResult<SharkSearchInfo>> getFavoriteSharks() async {
   var response = await http.get(Uri.parse(url), headers: headers);
 
   if (response.statusCode == 401) {
+    Config.accessToken = null;
     return PossibleErrorResult(
         resultData: null, resultStatus: ResultEnum.unauthorized);
   }
@@ -274,6 +282,7 @@ Future<PossibleErrorResult<BuoySearchInfo>> getFavoriteBuoys() async {
   var response = await http.get(Uri.parse(url), headers: headers);
 
   if (response.statusCode == 401) {
+    Config.accessToken = null;
     return PossibleErrorResult(
         resultData: null, resultStatus: ResultEnum.unauthorized);
   }
@@ -299,6 +308,7 @@ Future<PossibleErrorResult> _addBuoyToFavorite(String buoyId) {
 
   return http.put(Uri.parse(url), headers: headers).then((response) {
     if (response.statusCode == 401) {
+      Config.accessToken = null;
       return PossibleErrorResult(
           resultData: null, resultStatus: ResultEnum.unauthorized);
     }
@@ -327,6 +337,7 @@ Future<PossibleErrorResult> _removeBuoyFromFavorite(String buoyId) {
 
   return http.delete(Uri.parse(url), headers: headers).then((response) {
     if (response.statusCode == 401) {
+      Config.accessToken = null;
       return PossibleErrorResult(
           resultData: null, resultStatus: ResultEnum.unauthorized);
     }
@@ -363,6 +374,7 @@ Future<PossibleErrorResult> _addSharkToFavoriteValue(String sharkId) {
 
   return http.put(Uri.parse(url), headers: headers).then((response) {
     if (response.statusCode == 401) {
+      Config.accessToken = null;
       return PossibleErrorResult(
           resultData: null, resultStatus: ResultEnum.unauthorized);
     }
@@ -391,6 +403,7 @@ Future<PossibleErrorResult> _removeSharkFromFavorite(String sharkId) {
 
   return http.delete(Uri.parse(url), headers: headers).then((response) {
     if (response.statusCode == 401) {
+      Config.accessToken = null;
       return PossibleErrorResult(
           resultData: null, resultStatus: ResultEnum.unauthorized);
     }
@@ -427,6 +440,7 @@ Future<PossibleErrorResult> deletePhoto() {
 
   return http.delete(Uri.parse(url), headers: headers).then((response) {
     if (response.statusCode == 401) {
+      Config.accessToken = null;
       return PossibleErrorResult(
           resultData: null, resultStatus: ResultEnum.unauthorized);
     }
@@ -459,6 +473,7 @@ Future<PossibleErrorResult> updatePhoto(String photo) {
 
   return http.post(Uri.parse(url), headers: headers, body: body).then((response) {
     if (response.statusCode == 401) {
+      Config.accessToken = null;
       return PossibleErrorResult(
           resultData: null, resultStatus: ResultEnum.unauthorized);
     }

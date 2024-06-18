@@ -1,3 +1,4 @@
+import 'package:client/api/profile.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -5,6 +6,8 @@ import 'package:client/models/config.dart';
 import 'package:client/models/shark.dart';
 
 Future<SharkSearchInfo> searchShark(String query) async {
+  await getUserInfo();
+
   String url = "${Config.apiUrl}/sharks/get_by_name/$query/";
 
   Map<String, String> headers = {};
@@ -26,6 +29,8 @@ Future<SharkSearchInfo> searchShark(String query) async {
 }
 
 Future<SharkFullInfo> getSharkFullInfo(String sharkId) async {
+  await getUserInfo();
+
   String url = "${Config.apiUrl}/sharks/get_by_id/$sharkId/";
 
   var response = await http.get(Uri.parse(url));

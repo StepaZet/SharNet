@@ -4,6 +4,7 @@ import 'package:client/components/shark_list.dart';
 import 'package:client/models/buoy.dart';
 import 'package:client/models/profile_info.dart';
 import 'package:client/models/shark.dart';
+import 'package:client/pages/navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 class FavoriteItems extends StatelessWidget {
@@ -52,6 +53,17 @@ class FavoriteItems extends StatelessWidget {
                         return Center(child: Text('Error: ${snapshot.error}'));
                       }
 
+                      if (snapshot.data!.resultStatus == ResultEnum.unauthorized) {
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                        Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: Duration.zero,
+                            pageBuilder: (_, __, ___) => const MyHomePage(),
+                          ),
+                        );
+                      }
+
                       if (snapshot.data!.resultStatus != ResultEnum.ok) {
                         ScaffoldMessenger.of(context)
                             .showSnackBar(const SnackBar(
@@ -75,6 +87,17 @@ class FavoriteItems extends StatelessWidget {
                       }
                       if (snapshot.hasError || !snapshot.hasData) {
                         return Center(child: Text('Error: ${snapshot.error}'));
+                      }
+
+                      if (snapshot.data!.resultStatus == ResultEnum.unauthorized) {
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                        Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: Duration.zero,
+                            pageBuilder: (_, __, ___) => const MyHomePage(),
+                          ),
+                        );
                       }
 
                       if (snapshot.data!.resultStatus != ResultEnum.ok) {

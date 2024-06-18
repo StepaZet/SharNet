@@ -73,7 +73,7 @@ flutter {
 dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
 
 
     // TODO: Add the dependencies for any other Firebase products you want to use

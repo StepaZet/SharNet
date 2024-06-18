@@ -5,6 +5,7 @@ import 'package:client/api/profile.dart';
 import 'package:client/components/styles.dart';
 import 'package:client/models/profile_info.dart';
 import 'package:client/pages/auth/reset_password.dart';
+import 'package:client/pages/navigation_bar.dart';
 import 'package:client/pages/profile/profile_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -114,6 +115,17 @@ class EditProfile extends StatelessWidget {
                                         var result = await updatePhoto(base64String);
                                         ref.read(isLoadingUpdateProfileProvider.notifier).state = false;
 
+                                        if (result.resultStatus == ResultEnum.unauthorized) {
+                                          Navigator.popUntil(context, (route) => route.isFirst);
+                                          Navigator.pushReplacement(
+                                            context,
+                                            PageRouteBuilder(
+                                              transitionDuration: Duration.zero,
+                                              pageBuilder: (_, __, ___) => const MyHomePage(),
+                                            ),
+                                          );
+                                        }
+
                                         var text = result.resultStatus != ResultEnum.ok
                                             ? 'An error occurred while updating the photo'
                                             : 'Photo updated successfully';
@@ -125,6 +137,18 @@ class EditProfile extends StatelessWidget {
                                         if (result.resultStatus == ResultEnum.ok) {
                                           ref.read(photoUrlProvider.notifier).state = '';
                                           var newUserInfo = await getUserInfo();
+
+                                          if (newUserInfo.resultStatus == ResultEnum.unauthorized) {
+                                            Navigator.popUntil(context, (route) => route.isFirst);
+                                            Navigator.pushReplacement(
+                                              context,
+                                              PageRouteBuilder(
+                                                transitionDuration: Duration.zero,
+                                                pageBuilder: (_, __, ___) => const MyHomePage(),
+                                              ),
+                                            );
+                                          }
+
                                           if (newUserInfo.resultStatus == ResultEnum.ok) {
                                             userInfo.photoUrl = newUserInfo.resultData!.photoUrl;
                                             ref.read(photoUrlProvider.notifier).state =
@@ -157,6 +181,17 @@ class EditProfile extends StatelessWidget {
                                       var result = await deletePhoto();
                                       ref.read(isLoadingDeletePhotoProvider.notifier).state = false;
 
+                                      if (result.resultStatus == ResultEnum.unauthorized) {
+                                        Navigator.popUntil(context, (route) => route.isFirst);
+                                        Navigator.pushReplacement(
+                                          context,
+                                          PageRouteBuilder(
+                                            transitionDuration: Duration.zero,
+                                            pageBuilder: (_, __, ___) => const MyHomePage(),
+                                          ),
+                                        );
+                                      }
+
                                       var text = result.resultStatus != ResultEnum.ok
                                           ? 'An error occurred while deleting the photo'
                                           : 'Photo deleted successfully';
@@ -168,6 +203,16 @@ class EditProfile extends StatelessWidget {
                                       if (result.resultStatus == ResultEnum.ok) {
                                         ref.read(photoUrlProvider.notifier).state = '';
                                         var newUserInfo = await getUserInfo();
+                                        if (newUserInfo.resultStatus == ResultEnum.unauthorized) {
+                                          Navigator.popUntil(context, (route) => route.isFirst);
+                                          Navigator.pushReplacement(
+                                            context,
+                                            PageRouteBuilder(
+                                              transitionDuration: Duration.zero,
+                                              pageBuilder: (_, __, ___) => const MyHomePage(),
+                                            ),
+                                          );
+                                        }
                                         if (newUserInfo.resultStatus == ResultEnum.ok) {
                                           userInfo.photoUrl = newUserInfo.resultData!.photoUrl;
                                           ref.read(photoUrlProvider.notifier).state = newUserInfo.resultData!.photoUrl;
@@ -265,6 +310,17 @@ class EditProfile extends StatelessWidget {
 
                       var result = await updateUserInfo(
                           _nameController.text, _surnameController.text, _birthDateController.text);
+
+                      if (result.resultStatus == ResultEnum.unauthorized) {
+                        Navigator.popUntil(context, (route) => route.isFirst);
+                        Navigator.pushReplacement(
+                          context,
+                          PageRouteBuilder(
+                            transitionDuration: Duration.zero,
+                            pageBuilder: (_, __, ___) => const MyHomePage(),
+                          ),
+                        );
+                      }
 
                       if (result.resultStatus != ResultEnum.ok) {
                         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(

@@ -1,3 +1,4 @@
+import 'package:client/api/profile.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -7,8 +8,7 @@ import 'package:client/models/config.dart';
 import 'package:client/models/positions.dart';
 import 'package:client/models/shark.dart';
 
-Future<MapShortInfo> getMapShortInfo(
-    DateTime startDate, DateTime endDate) async {
+Future<MapShortInfo> getMapShortInfo(DateTime startDate, DateTime endDate) async {
   String url =
       "${Config.apiUrl}/common/by_date/?date_from=${startDate.toIso8601String()}&date_to=${endDate.toIso8601String()}";
 
@@ -28,8 +28,9 @@ Future<MapShortInfo> getMapShortInfo(
   ]);
 }
 
-Future<BuoyMapInfo> getBuoyMapInfo(
-    String buoyId, DateTime start, DateTime end) async {
+Future<BuoyMapInfo> getBuoyMapInfo(String buoyId, DateTime start, DateTime end) async {
+  await getUserInfo();
+
   String url =
       "${Config.apiUrl}/buoys/by_id_and_date/$buoyId/?date_from=${start.toIso8601String()}&date_to=${end.toIso8601String()}";
 
@@ -61,8 +62,9 @@ Future<BuoyMapInfo> getBuoyMapInfo(
   );
 }
 
-Future<SharkMapInfo> getSharkMapInfo(
-    String sharkId, DateTime start, DateTime end) async {
+Future<SharkMapInfo> getSharkMapInfo(String sharkId, DateTime start, DateTime end) async {
+  await getUserInfo();
+
   String url =
       "${Config.apiUrl}/sharks/get_by_id_and_date/$sharkId/?date_from=${start.toIso8601String()}&date_to=${end.toIso8601String()}";
 
@@ -94,15 +96,9 @@ Future<SharkMapInfo> getSharkMapInfo(
     lastTagged: "2023-12-15",
     tracksList: [
       [
-        PointInfo(
-            coordinates: LatLng(37.4219983, -122.0840579),
-            dateTime: DateTime.parse("2023-12-15T10:00:00Z")),
-        PointInfo(
-            coordinates: LatLng(67.4220000, -122.0840575),
-            dateTime: DateTime.parse("2023-12-15T11:00:00Z")),
-        PointInfo(
-            coordinates: LatLng(50.4220000, -92.0840575),
-            dateTime: DateTime.parse("2023-12-15T11:00:00Z"))
+        PointInfo(coordinates: LatLng(37.4219983, -122.0840579), dateTime: DateTime.parse("2023-12-15T10:00:00Z")),
+        PointInfo(coordinates: LatLng(67.4220000, -122.0840575), dateTime: DateTime.parse("2023-12-15T11:00:00Z")),
+        PointInfo(coordinates: LatLng(50.4220000, -92.0840575), dateTime: DateTime.parse("2023-12-15T11:00:00Z"))
       ],
     ],
   );

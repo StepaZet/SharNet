@@ -1,6 +1,7 @@
 import 'package:client/api/profile.dart';
 import 'package:client/components/like_button.dart';
 import 'package:client/models/profile_info.dart';
+import 'package:client/pages/navigation_bar.dart';
 import 'package:flutter/material.dart';
 
 import 'package:client/api/sharks.dart';
@@ -70,7 +71,9 @@ class SharkCard extends ConsumerWidget {
                           favoriteProvider: favoriteProvider,
                           loadingProvider: loadingProvider,
                           onFavorite: () async {
+
                             var result = await changeSharkFavoriteValue(shark.id, shark.isFavourite!);
+
                             if (result.resultStatus == ResultEnum.ok) {
                               shark.isFavourite = !shark.isFavourite!;
                             }

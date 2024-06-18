@@ -1,3 +1,4 @@
+import 'package:client/api/profile.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'dart:convert';
@@ -6,6 +7,7 @@ import 'package:client/models/buoy.dart';
 import 'package:client/models/config.dart';
 
 Future<BuoySearchInfo> searchBuoy(String query) async {
+  await getUserInfo();
 
   Map<String, String> headers = {};
 
@@ -29,6 +31,8 @@ Future<BuoySearchInfo> searchBuoy(String query) async {
 
 
 Future<BuoyFullInfo> getBuoyFullInfo(String buoyId) async {
+  await getUserInfo();
+
   String url = "${Config.apiUrl}/buoys/get_by_id/$buoyId/";
 
   var response = await http.get(Uri.parse(url));
